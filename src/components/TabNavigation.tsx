@@ -1,43 +1,60 @@
 import React, {useCallback} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {MainScreen} from '../screens/MainScreen';
-import {MyPageScreen} from '../screens/MyPageScreen';
 import CustomIcon from './CustomIcon';
+import {MainStack} from './MainStack';
+import {MyPageStack} from './MyPageStack';
 
 const Tab = createBottomTabNavigator();
+
+const TabNavigatorStyles = {
+  backgroundColor: '#17171B',
+};
 
 export function TabNavigation() {
   const MainIcon = useCallback(
     ({color}: {color: string}) => (
-      <CustomIcon name="iconMain" color={color} size={35} />
+      <CustomIcon name="iconMain" color={color} size={36} />
     ),
     [],
   );
 
   const UploadIcon = useCallback(
     ({color}: {color: string}) => (
-      <CustomIcon name="iconUpload" color={color} size={35} />
+      <CustomIcon name="iconUpload" color={color} size={36} />
     ),
     [],
   );
 
   const MyPageIcon = useCallback(
     ({color}: {color: string}) => (
-      <CustomIcon name="iconMyPage" color={color} size={35} />
+      <CustomIcon name="iconMyPage" color={color} size={36} />
     ),
     [],
   );
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      initialRouteName="Main"
+      sceneContainerStyle={TabNavigatorStyles}
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: 80,
+          backgroundColor: '#17171B',
+          borderTopColor: '#17171B',
+        },
+        tabBarActiveTintColor: '#fff',
+        headerShown: false,
+      }}>
       <Tab.Screen
-        name="Login"
-        component={MainScreen}
+        name="MainStack"
+        component={MainStack}
         options={{
           tabBarIcon: MainIcon,
         }}
       />
       <Tab.Screen
-        name="Main"
+        name="Upload"
         component={MainScreen}
         options={{
           tabBarIcon: UploadIcon,
@@ -45,9 +62,10 @@ export function TabNavigation() {
       />
       <Tab.Screen
         name="MyPage"
-        component={MyPageScreen}
+        component={MyPageStack}
         options={{
           tabBarIcon: MyPageIcon,
+          headerTitle: '마이페이지',
         }}
       />
     </Tab.Navigator>

@@ -1,10 +1,22 @@
 import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type StackParamList = {
+  Login: undefined;
+  Preview: undefined;
+};
 
 export function LoginScreen() {
+  const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
+
   return (
     <View style={styles.container}>
-      <Pressable>
+      <Pressable
+        onPress={() => {
+          navigate('Preview');
+        }}>
         <Text style={styles.toMainText}>둘러보기</Text>
       </Pressable>
       <View>
@@ -41,6 +53,7 @@ const styles = StyleSheet.create({
     paddingLeft: 35,
     paddingRight: 35,
     paddingBottom: 31,
+    backgroundColor: '#17171B',
   },
   toMainText: {
     color: '#FFFFFF',
@@ -57,7 +70,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#FFFFFF',
     fontSize: 24,
-    fontFamily: 'NotoSansKR-Bold',
   },
   image: {
     width: 260,

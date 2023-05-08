@@ -1,16 +1,35 @@
 import React from 'react';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {PreviewScreen} from '../screens/PreviewScreen';
 import {LoginScreen} from '../screens/LoginScreen';
+import {PreviewScreen} from '../screens/PreviewScreen';
 
 const Stack = createNativeStackNavigator();
 
 export function StackNavigation() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Preview" component={PreviewScreen} />
+    <Stack.Navigator
+      initialRouteName="Login"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#17171B',
+        },
+        headerTintColor: '#fff',
+      }}>
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          headerTitle: '로그인',
+        }}
+      />
+      <Stack.Screen
+        name="Preview"
+        component={PreviewScreen}
+        options={{
+          headerTitle: '회원가입',
+        }}
+      />
     </Stack.Navigator>
   );
 }
