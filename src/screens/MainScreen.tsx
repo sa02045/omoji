@@ -5,8 +5,8 @@ export function MainScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <EvaluateButton type="good" onPress={() => {}} />
         <EvaluateButton type="hmm" onPress={() => {}} />
+        <EvaluateButton type="good" onPress={() => {}} />
       </View>
     </View>
   );
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     display: 'flex',
     flexDirection: 'row',
-    left: width / 2 - 100,
+    left: width / 2 - width / 4,
     bottom: 30,
   },
 });
