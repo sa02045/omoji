@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: '#17171B',
   },
   buttonContainer: {
     position: 'absolute',
