@@ -2,12 +2,15 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native';
 import {Navigation} from './components/Navigation';
+import {RecoilRoot} from 'recoil';
 
 function App(): JSX.Element {
   return (
-    <SafeAreaView style={styles.container}>
-      <Navigation />
-    </SafeAreaView>
+    <RecoilRoot>
+      <SafeAreaView style={styles.container}>
+        <Navigation />
+      </SafeAreaView>
+    </RecoilRoot>
   );
 }
 
