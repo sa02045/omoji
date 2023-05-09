@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {MainScreen} from '../screens/MainScreen';
 import CustomIcon from './CustomIcon';
 import {MainStack} from './MainStack';
 import {MyPageStack} from './MyPageStack';
+import {UploadStack} from './UploadStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -54,18 +54,19 @@ export function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Upload"
-        component={MainScreen}
+        name="UploadStack"
+        component={UploadStack}
         options={{
           tabBarIcon: UploadIcon,
         }}
       />
       <Tab.Screen
-        name="MyPage"
+        name="MyPageStack"
         component={MyPageStack}
         options={{
           tabBarIcon: MyPageIcon,
           headerTitle: '마이페이지',
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
