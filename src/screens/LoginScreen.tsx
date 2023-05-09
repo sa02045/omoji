@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -6,7 +6,9 @@ import NaverLogin from '@react-native-seoul/naver-login';
 import Config from 'react-native-config';
 import {requestGetNaverLogin} from '../api/auth';
 import {loginAtom} from '../atoms/LoginAtom';
-import {RecoilState, useRecoilState} from 'recoil';
+import {useRecoilState} from 'recoil';
+import {AppleButton} from '@invertase/react-native-apple-authentication';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 type StackParamList = {
   Login: undefined;
@@ -23,31 +25,16 @@ export function LoginScreen() {
 
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
 
-  const onPressNaverLogin = async () => {
-    try {
-      await fetchNaverLogin();
-    } catch (e) {
-      Alert.alert('로그인 실패');
-    }
-  };
+  const onPressNaverLogin = async () => {};
 
-  const fetchNaverLogin = async () => {
-    const {failureResponse, successResponse} = await NaverLogin.login({
-      appName,
-      consumerKey,
-      consumerSecret,
-      serviceUrlScheme,
+  useEffect(() => {
+    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+    return appleAuth.onCredentialRevoked(async () => {
+      console.warn(
+        'If this function executes, User Credentials have been Revoked',
+      );
     });
-    if (successResponse) {
-      await requestGetNaverLogin(successResponse.accessToken);
-      setLogin(true);
-      return;
-    }
-
-    if (failureResponse) {
-      Alert.alert('로그인 실패');
-    }
-  };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -75,26 +62,40 @@ export function LoginScreen() {
         <Pressable style={styles.loginContainer} onPress={onPressNaverLogin}>
           <Text style={styles.loginText}>네이버로 시작하기</Text>
         </Pressable>
-        <Pressable>
-          <Text style={styles.signUpText}>네이버로 회원가입</Text>
-        </Pressable>
+        <AppleButton
+          buttonStyle={AppleButton.Style.WHITE}
+          buttonType={AppleButton.Type.SIGN_IN}
+          style={styles.appleLogin}
+          onPress={() => onPressAppleLogin()}
+        />
       </View>
     </View>
   );
 }
 
+async function onPressAppleLogin() {
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  });
+
+  const credentialState = await appleAuth.getCredentialStateForUser(
+    appleAuthRequestResponse.user,
+  );
+
+  if (credentialState === appleAuth.State.AUTHORIZED) {
+  }
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
     paddingLeft: 35,
     paddingRight: 35,
-    paddingBottom: 31,
     backgroundColor: '#17171B',
   },
   toMainText: {
-    color: '#FFFFFF',
+    color: '#fff',
     padding: 16,
     alignSelf: 'flex-end',
   },
@@ -121,10 +122,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
   },
-  signUpText: {
-    opacity: 0,
-    color: '#03C75A',
-    margin: 16,
-    alignSelf: 'flex-end',
+  appleLogin: {
+    width: '100%',
+    height: 56,
   },
 });

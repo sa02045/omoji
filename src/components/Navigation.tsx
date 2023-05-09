@@ -11,7 +11,7 @@ export function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {!login ? (
+        {login ? (
           <Stack.Group>
             <Stack.Screen name="Tab" component={TabNavigation} />
           </Stack.Group>
