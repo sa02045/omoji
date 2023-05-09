@@ -2,14 +2,12 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {TabNavigation} from './TabNavigation';
 import {StackNavigation} from './StackNavigation';
-import {LoginAtom} from '../atoms/LoginAtom';
+import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {UploadScreen} from '../screens/UploadScreen';
-import {UploadStack} from './UploadStack';
 const Stack = createNativeStackNavigator();
 export function Navigation() {
-  const [login] = useRecoilState(LoginAtom);
+  const [login] = useRecoilState(loginAtom);
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
