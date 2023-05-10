@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   Image,
+  ImageBackground,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Tag} from '../components/Tag';
@@ -13,6 +14,8 @@ import BadImage from '../assets/hmm.png';
 import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
+import {EvaluateButton} from '../components/EvaluateButton';
+import Carousel from 'react-native-reanimated-carousel';
 
 type Params = {
   id: number;
@@ -28,6 +31,31 @@ export function MainPostScreen() {
   return (
     <View style={styles.mainPostContainer}>
       <ScrollView style={styles.scrollViewContainer}>
+        <View style={styles.imageContainer}>
+          <Carousel
+            width={width}
+            height={480}
+            data={[
+              {
+                imgUrl:
+                  'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
+              },
+            ]}
+            scrollAnimationDuration={1000}
+            onSnapToItem={index => console.log('current index:', index)}
+            renderItem={({item}) => (
+              <ImageBackground
+                source={{uri: item.imgUrl}}
+                resizeMode="cover"
+                style={{height: 480}}
+              />
+            )}
+          />
+          <View style={styles.evaluateButtonContainer}>
+            <EvaluateButton type="hmm" onPress={() => {}} />
+            <EvaluateButton type="good" onPress={() => {}} />
+          </View>
+        </View>
         <View style={styles.bottomContainer}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>제목이 한 줄일 경우...</Text>
@@ -205,5 +233,15 @@ const styles = StyleSheet.create({
   goodOrBadButtonText: {
     color: '#fff',
     marginLeft: 12,
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  evaluateButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 20,
+    left: width / 4,
   },
 });
