@@ -3,13 +3,22 @@ import {EvaluateButton} from '../components/EvaluateButton';
 import {useState} from 'react';
 import React from 'react';
 import {Lottie} from '../components/Lottie';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type StackParamList = {
+  MainPost: {id: string};
+};
 
 export function MainScreen() {
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
+  const navigation = useNavigation<StackNavigationProp<StackParamList>>();
+
   const onPressLottie = (type: 'good' | 'bad') => () => {
     setLottieType(type);
     setTimeout(() => {
       setLottieType(null);
+      navigation.navigate('MainPost', {id: '1'});
     }, 1000);
   };
   return (
