@@ -5,17 +5,15 @@ import {
   Dimensions,
   TextInput,
   Pressable,
-  Image,
   ImageBackground,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Tag} from '../components/Tag';
-import BadImage from '../assets/hmm.png';
-import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
 import {EvaluateButton} from '../components/EvaluateButton';
 import Carousel from 'react-native-reanimated-carousel';
+import {Lottie} from '../components/Lottie';
 
 type Params = {
   id: number;
@@ -25,7 +23,14 @@ export function MainPostScreen() {
   const route = useRoute();
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
+  const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
 
+  const onPressLottie = (type: 'good' | 'bad') => () => {
+    setLottieType(type);
+    setTimeout(() => {
+      setLottieType(null);
+    }, 1000);
+  };
   const onPressPostComment = () => {};
 
   return (
@@ -52,8 +57,8 @@ export function MainPostScreen() {
             )}
           />
           <View style={styles.evaluateButtonContainer}>
-            <EvaluateButton type="hmm" onPress={() => {}} />
-            <EvaluateButton type="good" onPress={() => {}} />
+            <EvaluateButton type="hmm" onPress={onPressLottie('bad')} />
+            <EvaluateButton type="good" onPress={onPressLottie('good')} />
           </View>
         </View>
         <View style={styles.bottomContainer}>
@@ -70,17 +75,6 @@ export function MainPostScreen() {
             </View>
             <View style={{marginRight: 8}}>
               <Tag text="test" />
-            </View>
-          </View>
-
-          <View style={styles.goodOrBadContainer}>
-            <View style={{...styles.goodOrBadButton, marginRight: 10}}>
-              <Image source={GoodImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>20000</Text>
-            </View>
-            <View style={styles.goodOrBadButton}>
-              <Image source={BadImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>20000</Text>
             </View>
           </View>
 
@@ -122,6 +116,7 @@ export function MainPostScreen() {
           <Text style={styles.myCommentText}>게시</Text>
         </Pressable>
       </View>
+      {lottieType && <Lottie type={lottieType} />}
     </View>
   );
 }
