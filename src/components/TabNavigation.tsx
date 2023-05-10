@@ -58,6 +58,7 @@ export function TabNavigation() {
         component={UploadStack}
         options={{
           tabBarIcon: UploadIcon,
+          headerShown: false,
         }}
       />
       <Tab.Screen
