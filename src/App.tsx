@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native';
 import {Navigation} from './components/Navigation';
 import {RecoilRoot} from 'recoil';
+import 'react-native-gesture-handler';
 
 function App(): JSX.Element {
   return (
