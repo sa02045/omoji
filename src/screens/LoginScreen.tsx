@@ -1,14 +1,13 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import NaverLogin from '@react-native-seoul/naver-login';
-import Config from 'react-native-config';
-import {requestGetNaverLogin} from '../api/auth';
-import {loginAtom} from '../atoms/LoginAtom';
-import {useRecoilState} from 'recoil';
-import {AppleButton} from '@invertase/react-native-apple-authentication';
-import {appleAuth} from '@invertase/react-native-apple-authentication';
+
+import {
+  AppleButton,
+  appleAuth,
+} from '@invertase/react-native-apple-authentication';
+import {requestPostAppleLogin} from '../api/auth';
 
 type StackParamList = {
   Login: undefined;
@@ -16,26 +15,7 @@ type StackParamList = {
 };
 
 export function LoginScreen() {
-  const consumerKey = Config.NAVER_APP_KEY;
-  const consumerSecret = Config.NAVER_APP_SECRET_KEY;
-  const appName = Config.APP_NAME;
-  const serviceUrlScheme = Config.SERVICE_URL_SCHEME;
-
-  const [_, setLogin] = useRecoilState(loginAtom);
-
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
-
-  const onPressNaverLogin = async () => {};
-
-  useEffect(() => {
-    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
-    return appleAuth.onCredentialRevoked(async () => {
-      console.warn(
-        'If this function executes, User Credentials have been Revoked',
-      );
-    });
-  }, []);
-
   return (
     <View style={styles.container}>
       <Pressable
@@ -52,18 +32,9 @@ export function LoginScreen() {
           source={require('../assets/loginImage.png')}
         />
       </View>
-      <View>
-        <Pressable style={styles.loginContainer}>
-          <Text style={styles.loginText}>토근 제거</Text>
-        </Pressable>
-        <Pressable style={styles.loginContainer}>
-          <Text style={styles.loginText}>로그아웃</Text>
-        </Pressable>
-        <Pressable style={styles.loginContainer} onPress={onPressNaverLogin}>
-          <Text style={styles.loginText}>네이버로 시작하기</Text>
-        </Pressable>
+      <View style={styles.loginButtonContainer}>
         <AppleButton
-          buttonStyle={AppleButton.Style.WHITE}
+          buttonStyle={AppleButton.Style.DEFAULT}
           buttonType={AppleButton.Type.SIGN_IN}
           style={styles.appleLogin}
           onPress={() => onPressAppleLogin()}
@@ -78,12 +49,25 @@ async function onPressAppleLogin() {
     requestedOperation: appleAuth.Operation.LOGIN,
     requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
   });
-
   const credentialState = await appleAuth.getCredentialStateForUser(
     appleAuthRequestResponse.user,
   );
 
   if (credentialState === appleAuth.State.AUTHORIZED) {
+    const {identityToken} = appleAuthRequestResponse;
+    if (!identityToken) {
+      Alert.alert('로그인 실패', '로그인에 실패했습니다.');
+      return;
+    }
+
+    try {
+      console.log(identityToken);
+      await requestPostAppleLogin(identityToken);
+      Alert.alert('로그인 성공', '로그인에 성공했습니다.');
+    } catch (e) {
+      console.log(e);
+      Alert.alert('로그인 실패', JSON.stringify(e));
+    }
   }
 }
 
@@ -99,7 +83,7 @@ const styles = StyleSheet.create({
     padding: 16,
     alignSelf: 'flex-end',
   },
-  loginContainer: {
+  naverLoginButton: {
     flexDirection: 'row',
     backgroundColor: '#03C75A',
     height: 56,
@@ -116,14 +100,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 76,
   },
-  loginText: {
+  naverLoginText: {
     flex: 1,
     color: '#FFFFFF',
     textAlign: 'center',
     alignSelf: 'center',
+    fontSize: 16,
   },
   appleLogin: {
     width: '100%',
     height: 56,
+    marginTop: 10,
+    borderRadius: 10,
+  },
+  loginButtonContainer: {
+    marginTop: 50,
   },
 });
