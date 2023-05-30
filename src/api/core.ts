@@ -1,15 +1,13 @@
 import axios from 'axios';
-import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 import {requestRefresh} from './auth';
 
-const BASE_URL = Config.BASE_URL;
 export const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
 export const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY';
 
 const instance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: 'https://omoji-server-vo2dfmd2vq-du.a.run.app/api/v1',
 });
 
 instance.interceptors.request.use(
@@ -21,7 +19,6 @@ instance.interceptors.request.use(
     return config;
   },
   error => {
-    console.log(error);
     return Promise.reject(error);
   },
 );
