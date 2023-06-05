@@ -15,6 +15,8 @@ import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
 import Carousel from 'react-native-reanimated-carousel';
+import {useQuery} from '@tanstack/react-query';
+import {fetchMyPostById, postCommentById} from '../api/post';
 
 type Params = {
   id: number;
@@ -22,69 +24,78 @@ type Params = {
 
 export function MyPostScreen() {
   const route = useRoute();
-
+  const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
 
-  const onPressPostComment = () => {};
+  const {data: myPost} = useQuery({
+    queryKey: ['myPost', id],
+    queryFn: async () => {
+      const post = await fetchMyPostById(id);
+      return post;
+    },
+  });
+
+  const onPressPostComment = async () => {
+    try {
+      await postCommentById(id, commentText);
+      setCommentText('');
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <View style={styles.mainPostContainer}>
       <ScrollView style={styles.scrollViewContainer}>
         <View style={styles.imageContainer}>
-          <Carousel
-            width={width}
-            height={480}
-            data={[
-              {
-                imgUrl:
-                  'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-              },
-            ]}
-            scrollAnimationDuration={1000}
-            onSnapToItem={index => console.log('current index:', index)}
-            renderItem={({item}) => (
-              <ImageBackground
-                source={{uri: item.imgUrl}}
-                resizeMode="cover"
-                style={{height: 480}}
-              />
-            )}
-          />
+          {myPost?.imgs && (
+            <Carousel
+              width={width}
+              height={480}
+              data={myPost.imgs}
+              loop={false}
+              scrollAnimationDuration={1000}
+              onSnapToItem={index => console.log('current index:', index)}
+              renderItem={({item}) => (
+                <ImageBackground
+                  source={{uri: item}}
+                  resizeMode="cover"
+                  style={{height: 480}}
+                />
+              )}
+            />
+          )}
         </View>
         <View style={styles.bottomContainer}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>제목이 한 줄일 경우...</Text>
+            <Text style={styles.title}>{myPost?.title}</Text>
           </View>
 
           <View style={styles.tagContainer}>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
-            </View>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
-            </View>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
-            </View>
+            {myPost?.hashtags.map(tag => (
+              <View style={{marginRight: 8}} key={tag}>
+                <Tag text={tag} />
+              </View>
+            ))}
           </View>
 
           <View style={styles.goodOrBadContainer}>
             <View style={{...styles.goodOrBadButton, marginRight: 10}}>
               <Image source={GoodImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>20000</Text>
+              <Text style={styles.goodOrBadButtonText}>
+                {myPost?.likeCount}
+              </Text>
             </View>
             <View style={styles.goodOrBadButton}>
               <Image source={BadImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>20000</Text>
+              <Text style={styles.goodOrBadButtonText}>
+                {myPost?.dislikeCount}
+              </Text>
             </View>
           </View>
 
           <View style={styles.contentContainer}>
-            <Text style={styles.contentText}>
-              이번주에 친구들이랑 강릉 여행가는데 어떤 옷을 입을지 고민되네여,,,
-              이렇게 입고 가면 추울까요? 1번 룩과 2번 룩 중에 골라주세요. 글자
-              수 100자로 제한
-            </Text>
+            <Text style={styles.contentText}>{myPost?.description}</Text>
           </View>
 
           <View style={styles.commentContainer}>
@@ -93,10 +104,8 @@ export function MyPostScreen() {
             </View>
             <View style={styles.commentBottomContainer}>
               <View style={styles.commentBottomCommentContainer}>
-                <Text style={styles.nickname}>네이버 닉네임</Text>
-                <Text style={styles.comment}>
-                  ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
-                </Text>
+                <Text style={styles.nickname} />
+                <Text style={styles.comment} />
               </View>
             </View>
           </View>

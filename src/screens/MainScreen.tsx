@@ -1,6 +1,8 @@
 import {
+  Button,
   Dimensions,
   ImageBackground,
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -9,9 +11,10 @@ import {EvaluateButton} from '../components/EvaluateButton';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import React from 'react';
 import {Lottie} from '../components/Lottie';
-import TinderCard from 'react-tinder-card';
-import axios from 'axios';
-
+import {requestGetMyPosts} from '../api/post';
+import {useQuery} from '@tanstack/react-query';
+import {requestPostEvaluate} from '../api/post';
+import {ImageCard} from '../components/ImageCard';
 export interface Product {
   id: number;
   title: string;
@@ -30,8 +33,9 @@ const alreadyRemoved: Array<number> = [-1];
 
 export function MainScreen() {
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
+
   const onPressLottie = useCallback(
-    (type: 'good' | 'bad') => {
+    async (type: 'good' | 'bad') => {
       setLottieType(type);
       setTimeout(() => {
         setLottieType(null);
@@ -44,74 +48,53 @@ export function MainScreen() {
   const [_, setLastDirection] = useState();
   const elementRef = useRef([]);
 
-  useEffect(() => {
-    axios.get('https://dummyjson.com/products').then(res => {
-      const getProducts = res.data.products as Product[];
-      setProducts(getProducts.slice(0, 5));
-    });
-  }, []);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const swiped = (direction: any, idToDelete: any) => {
-    console.log('removing: ' + idToDelete + ' to the ' + direction);
-    setLastDirection(direction);
-    alreadyRemoved.push(idToDelete);
-  };
+  // const onLayout = e => {
+  //   const {width, height} = e.nativeEvent.layout;
+  //   setCardWidth(width);
+  //   setCardHeight(height);
+  // };
 
-  const outOfFrame = (id: number) => {
-    setProducts(prev => {
-      return prev.filter(product => product.id !== id);
-    });
-  };
+  // const onPress = e => {
+  //   const {locationX, locationY} = e.nativeEvent;
+  //   if (linearHeight > locationY) {
+  //     console.log('detail');
+  //   } else {
+  //     setCurrentIndex(prev => {
+  //       if (cardWidth / 2 < locationX) {
+  //         return prev < imgs.length - 1 ? prev + 1 : imgs.length - 1;
+  //       } else {
+  //         return prev > 0 ? prev - 1 : 0;
+  //       }
+  //     });
+  //   }
+  // };
 
-  const swipe = (dir: string) => {
-    const cardsLeft = products.filter(
-      person => !alreadyRemoved.includes(person.id),
-    );
-    if (cardsLeft.length) {
-      const toBeRemoved = cardsLeft[cardsLeft.length - 1].id; // Find the card object to be removed
-      const index = products.map(person => person.id).indexOf(toBeRemoved); // Find the index of which to make the reference to
-      alreadyRemoved.push(toBeRemoved); // Make sure the next card gets removed next time if this card do not have time to exit the screen
-      (elementRef.current[index] as any).swipe(dir); // Swipe the card!
-    }
-  };
+  //
 
   return (
     <View style={styles.container}>
       <View style={styles.cardContainer}>
-        <View style={styles.cardContainer}>
-          {products.map((product, index) => (
-            <TinderCard
-              ref={ref => {
-                (elementRef.current[index] as any) = ref;
-              }}
-              key={product.id}
-              onSwipe={dir => swiped(dir, product.id)}
-              onCardLeftScreen={() => outOfFrame(product.id)}>
-              <View style={styles.card}>
-                <ImageBackground
-                  style={styles.cardImage}
-                  source={{
-                    uri: product.thumbnail,
-                  }}>
-                  <Text style={{color: '#fff'}}>{product.id}</Text>
-                </ImageBackground>
-              </View>
-            </TinderCard>
-          ))}
-        </View>
+        <ImageCard
+          title="title"
+          imgs={[
+            'https://post-phinf.pstatic.net/MjAxOTA3MThfMjM1/MDAxNTYzMzc4MjkwMzI0.2LosoDxKa0SWBbCpOkjGErXE6OkIBv0Jv67gglWzI9Yg.By-2KfSmjv-opW9hHhYiWLzcSV-S5zxhqpDxEtgeZpUg.JPEG/%EB%82%A8%EC%9E%90%EB%B0%98%EB%B0%94%EC%A7%80_%EC%9E%98_%EC%9E%85%EB%8A%94_%EC%BD%94%EB%94%94_BEST10_%284%29.jpg?type=w1200',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWKJ1_D6svJkDqmPbk1dKZ8EYEGUf_2TH_WA&usqp=CAU',
+          ]}
+        />
       </View>
+
       <View style={styles.buttonContainer}>
         <EvaluateButton
           type="hmm"
           onPress={() => {
-            swipe('left');
             onPressLottie('bad');
           }}
         />
         <EvaluateButton
           type="good"
           onPress={() => {
-            swipe('right');
             onPressLottie('good');
           }}
         />
@@ -121,7 +104,7 @@ export function MainScreen() {
   );
 }
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -145,8 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   cardContainer: {
-    width: '100%',
-    height: height,
+    flex: 1,
   },
   card: {
     position: 'absolute',

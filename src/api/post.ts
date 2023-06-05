@@ -1,6 +1,6 @@
 import axios from './core';
 
-export const requestPostPosts = async (data: any) => {
+export const requestPostPosts = async (data: FormData) => {
   return axios.post('/posts', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -20,9 +20,50 @@ export const requestPutPost = async (id: string, data: any) => {
   return axios.put(`/posts/${id}`, data);
 };
 
-export const requestGetMyPosts = async () => {
-  return axios.get('/posts/my');
-};
+interface Post {
+  id: string;
+  likeCount: number;
+  dislikeCount: number;
+  imgs: string[];
+  hashtags: string[];
+}
+interface MyPostsResponse {
+  posts: Post[];
+}
+
+export async function fetchMyPosts() {
+  const response = await axios.get<MyPostsResponse>('/posts/my');
+  return response.data.posts;
+}
+
+interface MyPostByIdResponse {
+  id: number;
+  isOwner: boolean;
+  title: string;
+  description: any;
+  likeCount: number;
+  dislikeCount: number;
+  imgs: string[];
+  hashtags: string[];
+}
+
+export async function fetchMyPostById(id: number) {
+  const response = await axios.get<MyPostByIdResponse>(`/posts/${id}`);
+  return response.data;
+}
+
+export async function fetchPostCommentById(postId: number) {
+  const response = await axios.get(`/posts/${postId}/comments`);
+  return response.data;
+}
+
+export async function postCommentById(postId: number, comment: string) {
+  const response = await axios.post(`/posts/${postId}/comments`, {
+    comment,
+    postId,
+  });
+  return response.data;
+}
 
 export const requestGetEvaluate = async () => {
   return axios.get('/evaluate');

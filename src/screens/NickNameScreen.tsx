@@ -1,7 +1,18 @@
-import React from 'react';
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {requestPatchProfile} from '../api/auth';
+
+import {NICKNAME_KEY} from '../api/core';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type StackParamList = {
   Login: undefined;
@@ -10,6 +21,19 @@ type StackParamList = {
 
 export function NickNameScreen() {
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
+
+  const [nickname, setNickname] = useState('');
+
+  async function onPressButton() {
+    try {
+      await requestPatchProfile(nickname);
+      await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
+      navigate('Preview');
+    } catch (e) {
+      Alert.alert('닉네임 설정 실패', JSON.stringify(e));
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -21,13 +45,12 @@ export function NickNameScreen() {
           style={styles.input}
           placeholderTextColor="#fff"
           maxLength={9}
+          onChangeText={setNickname}
+          value={nickname}
         />
       </View>
       <View>
-        <Pressable
-          onPress={() => {
-            navigate('Preview');
-          }}>
+        <Pressable onPress={onPressButton}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>확인</Text>
           </View>

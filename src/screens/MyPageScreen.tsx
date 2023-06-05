@@ -1,11 +1,14 @@
-import {Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {Text, TouchableOpacity, View, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlatList} from 'react-native-gesture-handler';
 import {MyPageImageCard} from '../components/MyPageImageCard';
-
+import {fetchMyPosts} from '../api/post';
+import {useQuery} from '@tanstack/react-query';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {NICKNAME_KEY} from '../api/core';
 type StackParamList = {
   MyPost: {id: number};
   Setting: undefined;
@@ -13,62 +16,83 @@ type StackParamList = {
 
 export function MyPageScreen() {
   const navigator = useNavigation<StackNavigationProp<StackParamList>>();
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    async function getNickname() {
+      const myNickName = await EncryptedStorage.getItem(NICKNAME_KEY);
+      if (myNickName) {
+        setNickname(myNickName);
+      }
+    }
+    getNickname();
+  }, []);
+
+  const {
+    data: myPosts,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['myPosts'],
+    queryFn: async () => {
+      const posts = await fetchMyPosts();
+      return posts;
+    },
+    onError(err) {
+      Alert.alert('에러가 발생했습니다.', JSON.stringify(err));
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <View style={styles.myPageScreenContainer}>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.myPageScreenContainer}>
+        <Text>Error</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.myPageScreenContainer}>
       <View style={styles.topContainer}>
         <View>
-          <Text style={styles.title}>춤추는</Text>
+          <Text style={styles.title}>{nickname}</Text>
         </View>
         <View>
-          <Text style={styles.subTitle}>춤추는</Text>
+          {myPosts && (
+            <Text style={styles.subTitle}>게시물 {myPosts.length}</Text>
+          )}
         </View>
       </View>
-      <FlatList
-        keyExtractor={(item, index) => index.toString()}
-        data={[
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-          {
-            imgUrl:
-              'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-          },
-        ]}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => {
-              navigator.navigate('MyPost', {id: 1});
-            }}>
-            <View style={styles.imageWrapper}>
-              <MyPageImageCard
-                image={item.imgUrl}
-                likeCount={1000}
-                dislikeCount={1000}
-              />
-            </View>
-          </TouchableOpacity>
-        )}
-        numColumns={2}
-        windowSize={6}
-      />
+      {myPosts && (
+        <FlatList
+          keyExtractor={(item, index) => index.toString()}
+          data={myPosts}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigator.navigate('MyPost', {id: Number(item.id)});
+              }}>
+              <View style={styles.imageWrapper}>
+                <MyPageImageCard
+                  image={item.imgs[0]}
+                  likeCount={item.likeCount}
+                  dislikeCount={item.dislikeCount}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
+          numColumns={2}
+          windowSize={6}
+        />
+      )}
     </View>
   );
 }

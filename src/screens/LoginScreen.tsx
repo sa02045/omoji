@@ -2,6 +2,10 @@ import React from 'react';
 import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, NICKNAME_KEY} from '../api/core';
+import {useRecoilState} from 'recoil';
+import {loginAtom} from '../atoms/LoginAtom';
 
 import {
   AppleButton,
@@ -12,10 +16,48 @@ import {requestPostAppleLogin} from '../api/auth';
 type StackParamList = {
   Login: undefined;
   Preview: undefined;
+  NickName: undefined;
 };
 
 export function LoginScreen() {
+  const [_, setLogin] = useRecoilState(loginAtom);
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
+
+  async function onPressAppleLogin() {
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      const {identityToken} = appleAuthRequestResponse;
+      if (!identityToken) {
+        Alert.alert('로그인 실패', '로그인에 실패했습니다.');
+        return;
+      }
+
+      try {
+        const {accessToken, refreshToken, isNewUser, nickname} =
+          await requestPostAppleLogin(identityToken);
+
+        await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        await EncryptedStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+
+        if (isNewUser) {
+          navigate('NickName');
+        } else {
+          await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
+          setLogin(true);
+        }
+      } catch (e) {
+        Alert.alert('로그인 실패', JSON.stringify(e));
+      }
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -42,33 +84,6 @@ export function LoginScreen() {
       </View>
     </View>
   );
-}
-
-async function onPressAppleLogin() {
-  const appleAuthRequestResponse = await appleAuth.performRequest({
-    requestedOperation: appleAuth.Operation.LOGIN,
-    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-  });
-  const credentialState = await appleAuth.getCredentialStateForUser(
-    appleAuthRequestResponse.user,
-  );
-
-  if (credentialState === appleAuth.State.AUTHORIZED) {
-    const {identityToken} = appleAuthRequestResponse;
-    if (!identityToken) {
-      Alert.alert('로그인 실패', '로그인에 실패했습니다.');
-      return;
-    }
-
-    try {
-      console.log(identityToken);
-      await requestPostAppleLogin(identityToken);
-      Alert.alert('로그인 성공', '로그인에 성공했습니다.');
-    } catch (e) {
-      console.log(e);
-      Alert.alert('로그인 실패', JSON.stringify(e));
-    }
-  }
 }
 
 const styles = StyleSheet.create({

@@ -5,6 +5,7 @@ import {requestRefresh} from './auth';
 
 export const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
 export const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY';
+export const NICKNAME_KEY = 'NICKNAME_KEY';
 
 const instance = axios.create({
   baseURL: 'https://omoji-server-vo2dfmd2vq-du.a.run.app/api/v1',
@@ -39,9 +40,9 @@ instance.interceptors.response.use(
       if (!accessToken || !refreshToken) {
         return Promise.reject(error);
       }
-      const {data} = await requestRefresh(accessToken, refreshToken);
-      await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, data.data.accessToken);
-      originalRequest.headers.authorization = `Bearer ${data.data.accessToken}`;
+      // const  = await requestRefresh(accessToken, refreshToken);
+      // await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, data.data.accessToken);
+      // originalRequest.headers.authorization = `Bearer ${data.data.accessToken}`;
       return axios(originalRequest);
     }
     return Promise.reject(error);

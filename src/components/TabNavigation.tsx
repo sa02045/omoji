@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CustomIcon from './CustomIcon';
 import {MainStack} from './MainStack';
 import {MyPageStack} from './MyPageStack';
-import {UploadStack} from './UploadStack';
+import {UploadScreen} from '../screens/UploadScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,7 +55,7 @@ export function TabNavigation() {
       />
       <Tab.Screen
         name="UploadStack"
-        component={UploadStack}
+        component={UploadScreen}
         options={{
           tabBarIcon: UploadIcon,
           headerShown: false,
