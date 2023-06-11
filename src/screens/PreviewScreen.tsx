@@ -6,8 +6,11 @@ import Preview1 from '../assets/preview1.png';
 import Preview2 from '../assets/preview2.png';
 import Preview3 from '../assets/preview3.png';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {useRecoilValue} from 'recoil';
+import {loginAtom} from '../atoms/LoginAtom';
 type StackParamList = {
   Login: undefined;
+  Main: undefined;
 };
 
 const {width} = Dimensions.get('window');
@@ -15,6 +18,7 @@ const {width} = Dimensions.get('window');
 export const PreviewScreen = () => {
   const [preview, setPreview] = useState(Preview1);
   const [step, setStep] = useState(0);
+  const login = useRecoilValue(loginAtom);
 
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
 
@@ -30,7 +34,11 @@ export const PreviewScreen = () => {
             setPreview(Preview3);
             setStep(2);
           } else {
-            navigate('Login');
+            if (login) {
+              navigate('Main');
+            } else {
+              navigate('Login');
+            }
           }
         }}>
         <Image source={preview} style={styles.image} />

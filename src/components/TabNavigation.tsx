@@ -1,10 +1,12 @@
 import React, {useCallback} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import CustomIcon from './CustomIcon';
-import {MainStack} from './MainStack';
 import {MyPageStack} from './MyPageStack';
 import {UploadScreen} from '../screens/UploadScreen';
-
+import {useNavigation} from '@react-navigation/native';
+import {MainPostScreen} from '../screens/MainPostScreen';
+import {MainScreen} from '../screens/MainScreen';
+import {TouchableOpacity} from 'react-native';
 const Tab = createBottomTabNavigator();
 
 const TabNavigatorStyles = {
@@ -12,6 +14,8 @@ const TabNavigatorStyles = {
 };
 
 export function TabNavigation() {
+  const navigation = useNavigation();
+
   const MainIcon = useCallback(
     ({color}: {color: string}) => (
       <CustomIcon name="iconMain" color={color} size={36} />
@@ -32,8 +36,23 @@ export function TabNavigation() {
     ),
     [],
   );
+
+  const headerLeft = useCallback(
+    () => (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={{marginLeft: 10}}>
+        <CustomIcon name="iconArrowLeft" color="#fff" size={24} />
+      </TouchableOpacity>
+    ),
+    [navigation],
+  );
+
   return (
     <Tab.Navigator
+      id="TabNavigator"
       initialRouteName="Main"
       sceneContainerStyle={TabNavigatorStyles}
       screenOptions={{
@@ -47,10 +66,37 @@ export function TabNavigation() {
         headerShown: false,
       }}>
       <Tab.Screen
-        name="MainStack"
-        component={MainStack}
-        options={{
+        name="Main"
+        component={MainScreen}
+        options={() => ({
+          headerShown: true,
+          headerTitle: '오모지',
+          headerTitleStyle: {
+            color: '#fff',
+          },
+          headerStyle: {
+            backgroundColor: '#17171B',
+          },
           tabBarIcon: MainIcon,
+        })}
+      />
+      <Tab.Screen
+        name="MainPost"
+        component={MainPostScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: 'none',
+          },
+          headerShown: true,
+          headerTitle: '',
+          headerTitleStyle: {
+            color: '#fff',
+          },
+          headerStyle: {
+            backgroundColor: '#17171B',
+          },
+          headerLeft: headerLeft,
         }}
       />
       <Tab.Screen

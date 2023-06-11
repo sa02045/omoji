@@ -17,13 +17,17 @@ export function Navigation() {
       const refToken = await EncryptedStorage.getItem(REFRESH_TOKEN_KEY);
 
       if (accessToken && refToken) {
-        const {refreshToken: newRefreshToken} = await requestRefresh(
-          accessToken,
-          refToken,
-        );
+        try {
+          const {refreshToken: newRefreshToken} = await requestRefresh(
+            accessToken,
+            refToken,
+          );
 
-        await EncryptedStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
-        setLogin(true);
+          await EncryptedStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+          setLogin(true);
+        } catch (e) {
+          setLogin(false);
+        }
       }
     }
 

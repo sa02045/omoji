@@ -1,32 +1,38 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {LayoutChangeEvent, GestureResponderEvent} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {GestureResponderEvent} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   title: string;
   imgs: string[];
+  goPostScreen: (postId: number) => void;
+  postId: number;
+  hideLinearHeight?: boolean;
 }
-export function ImageCard({title, imgs}: Props) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [cardWidth, setCardWidth] = useState(0);
-  const [cardHeight, setCardHeight] = useState(0);
-  const slides = new Array(5).fill(0);
-  const linearHeight = cardHeight / 3.3;
 
-  const onLayout = (e: LayoutChangeEvent) => {
-    const {width, height} = e.nativeEvent.layout;
-    setCardWidth(width);
-    setCardHeight(height);
-  };
+const {width, height} = Dimensions.get('window');
+
+export function ImageCard({title, imgs, goPostScreen, postId}: Props) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const slides = new Array(5).fill(0);
+  const linearHeight = height / 9;
 
   const onPress = (e: GestureResponderEvent) => {
     const {locationX, locationY} = e.nativeEvent;
-    if (linearHeight > locationY) {
+    if (locationY < height / 4) {
+      goPostScreen(postId);
     } else {
       setCurrentIndex(prev => {
-        if (cardWidth / 2 < locationX) {
+        if (width / 2 < locationX) {
           return prev < imgs.length - 1 ? prev + 1 : imgs.length - 1;
         } else {
           return prev > 0 ? prev - 1 : 0;
@@ -36,10 +42,10 @@ export function ImageCard({title, imgs}: Props) {
   };
 
   return (
-    <View style={styles.container} onLayout={onLayout}>
+    <View style={styles.container}>
       <Pressable style={styles.pressableContainer} onPress={onPress}>
         <Image
-          style={{width: 358, height: 638, borderRadius: 10}}
+          style={{width: width, height: '100%'}}
           source={{
             uri: imgs?.[currentIndex],
           }}
@@ -101,7 +107,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    borderRadius: 10,
   },
   pressableContainer: {
     flex: 1,
@@ -110,7 +115,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    borderRadius: 10,
   },
   linearGradientLayer: {
     position: 'absolute',

@@ -1,7 +1,14 @@
-import {Text, TouchableOpacity, View, Alert} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  Image,
+  Pressable,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ActivityIndicator} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlatList} from 'react-native-gesture-handler';
 import {MyPageImageCard} from '../components/MyPageImageCard';
@@ -12,6 +19,7 @@ import {NICKNAME_KEY} from '../api/core';
 type StackParamList = {
   MyPost: {id: number};
   Setting: undefined;
+  NickName: undefined;
 };
 
 export function MyPageScreen() {
@@ -45,8 +53,15 @@ export function MyPageScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.myPageScreenContainer}>
-        <Text>Loading</Text>
+      <View
+        style={{
+          backgroundColor: '#17171B',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -62,13 +77,38 @@ export function MyPageScreen() {
   return (
     <View style={styles.myPageScreenContainer}>
       <View style={styles.topContainer}>
-        <View>
-          <Text style={styles.title}>{nickname}</Text>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#fff'}}>
+            {nickname}
+          </Text>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Pressable
+              onPress={() => {
+                navigator.navigate('Setting');
+              }}>
+              <Image
+                source={require('../assets/Setting.png')}
+                style={{width: 36, height: 36}}
+              />
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                navigator.navigate('NickName');
+              }}>
+              <Image
+                source={require('../assets/Edit.png')}
+                style={{width: 36, height: 36}}
+              />
+            </Pressable>
+          </View>
         </View>
         <View>
-          {myPosts && (
-            <Text style={styles.subTitle}>게시물 {myPosts.length}</Text>
-          )}
+          <Text style={styles.subTitle}>게시물 {myPosts?.length}</Text>
         </View>
       </View>
       {myPosts && (
@@ -80,7 +120,7 @@ export function MyPageScreen() {
               onPress={() => {
                 navigator.navigate('MyPost', {id: Number(item.id)});
               }}>
-              <View style={styles.imageWrapper}>
+              <View>
                 <MyPageImageCard
                   image={item.imgs[0]}
                   likeCount={item.likeCount}
@@ -90,7 +130,6 @@ export function MyPageScreen() {
             </TouchableOpacity>
           )}
           numColumns={2}
-          windowSize={6}
         />
       )}
     </View>
@@ -100,23 +139,16 @@ export function MyPageScreen() {
 const styles = StyleSheet.create({
   myPageScreenContainer: {
     backgroundColor: '#17171B',
-    flex: 1,
   },
   topContainer: {
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 16,
     paddingBottom: 16,
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    display: 'flex',
   },
   subTitle: {
     fontSize: 14,
     color: '#858585',
   },
-  imageWrapper: {},
 });

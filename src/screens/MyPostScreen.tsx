@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState} from 'react';
 import {Tag} from '../components/Tag';
@@ -27,7 +28,7 @@ export function MyPostScreen() {
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
 
-  const {data: myPost} = useQuery({
+  const {data: myPost, isLoading} = useQuery({
     queryKey: ['myPost', id],
     queryFn: async () => {
       const post = await fetchMyPostById(id);
@@ -43,6 +44,21 @@ export function MyPostScreen() {
       console.log(e);
     }
   };
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          backgroundColor: '#17171B',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.mainPostContainer}>

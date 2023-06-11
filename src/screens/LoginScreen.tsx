@@ -6,12 +6,11 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, NICKNAME_KEY} from '../api/core';
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
+import Config from 'react-native-config';
 
-import {
-  AppleButton,
-  appleAuth,
-} from '@invertase/react-native-apple-authentication';
-import {requestPostAppleLogin} from '../api/auth';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
+import {requestPostAppleLogin, requestGetNaverLogin} from '../api/auth';
+import NaverLogin from '@react-native-seoul/naver-login';
 
 type StackParamList = {
   Login: undefined;
@@ -22,6 +21,11 @@ type StackParamList = {
 export function LoginScreen() {
   const [_, setLogin] = useRecoilState(loginAtom);
   const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
+
+  const consumerKey = Config.NAVER_APP_KEY;
+  const consumerSecret = Config.NAVER_APP_SECRET_KEY;
+  const appName = Config.APP_NAME;
+  const serviceUrlScheme = Config.SERVICE_URL_SCHEME;
 
   async function onPressAppleLogin() {
     const appleAuthRequestResponse = await appleAuth.performRequest({
@@ -59,24 +63,21 @@ export function LoginScreen() {
   }
 
   async function onPressNaverLogin() {
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    if (!consumerKey || !consumerSecret || !appName || !serviceUrlScheme) {
+      return;
+    }
+
+    const {failureResponse, successResponse} = await NaverLogin.login({
+      appName,
+      consumerKey,
+      consumerSecret,
+      serviceUrlScheme,
     });
-    const credentialState = await appleAuth.getCredentialStateForUser(
-      appleAuthRequestResponse.user,
-    );
 
-    if (credentialState === appleAuth.State.AUTHORIZED) {
-      const {identityToken} = appleAuthRequestResponse;
-      if (!identityToken) {
-        Alert.alert('로그인 실패', '로그인에 실패했습니다.');
-        return;
-      }
-
+    if (successResponse) {
       try {
-        const {accessToken, refreshToken, isNewUser, nickname} =
-          await requestPostAppleLogin(identityToken);
+        const {nickname, isNewUser, accessToken, refreshToken} =
+          await requestGetNaverLogin(successResponse.accessToken);
 
         await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
         await EncryptedStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
@@ -90,6 +91,10 @@ export function LoginScreen() {
       } catch (e) {
         Alert.alert('로그인 실패', JSON.stringify(e));
       }
+    }
+
+    if (failureResponse) {
+      Alert.alert('로그인 실패');
     }
   }
   return (

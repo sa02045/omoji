@@ -24,7 +24,7 @@ export function UploadStack() {
         <Text style={{color: '#fff'}}>Left</Text>
       </TouchableOpacity>
     ),
-    [],
+    [navigation],
   );
 
   const headerRight = useCallback(

@@ -1,18 +1,30 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useRecoilState} from 'recoil';
+import {loginAtom} from '../atoms/LoginAtom';
 export function SettingScreen() {
+  const [_, setLogin] = useRecoilState(loginAtom);
   return (
     <View style={styles.container}>
       <View>
         <View>
           <View style={styles.row}>
-            <Text style={styles.text}>로그아웃</Text>
+            <Pressable
+              onPress={() => {
+                EncryptedStorage.removeItem('accessToken');
+                EncryptedStorage.removeItem('refreshToken');
+                setLogin(false);
+              }}>
+              <Text style={styles.text}>로그아웃</Text>
+            </Pressable>
           </View>
           <View style={styles.row}>
             <Pressable
               onPress={() => {
-                // navigation.navigate('탈퇴하기');
+                EncryptedStorage.removeItem('accessToken');
+                EncryptedStorage.removeItem('refreshToken');
+                setLogin(false);
               }}>
               <Text style={styles.text}>탈퇴하기</Text>
             </Pressable>

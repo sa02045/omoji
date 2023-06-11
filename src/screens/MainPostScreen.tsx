@@ -5,15 +5,21 @@ import {
   Dimensions,
   TextInput,
   Pressable,
-  ImageBackground,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Tag} from '../components/Tag';
+import BadImage from '../assets/hmm.png';
+import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
+import {useQuery} from '@tanstack/react-query';
+import {fetchMyPostById, postCommentById} from '../api/post';
 import {EvaluateButton} from '../components/EvaluateButton';
-import Carousel from 'react-native-reanimated-carousel';
+import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
+import {postEvaluate} from '../api/evaluate';
 
 type Params = {
   id: number;
@@ -24,66 +30,109 @@ export function MainPostScreen() {
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
+  const {data: myPost, isLoading} = useQuery({
+    queryKey: ['myPost', id],
+    queryFn: async () => {
+      const post = await fetchMyPostById(id);
+      return post;
+    },
+  });
 
-  const onPressLottie = (type: 'good' | 'bad') => () => {
-    setLottieType(type);
-    setTimeout(() => {
-      setLottieType(null);
-    }, 1000);
+  const onPressPostComment = async () => {
+    await postCommentById(id, commentText);
+    setCommentText('');
   };
-  const onPressPostComment = () => {};
+
+  const onPressLottie = useCallback(
+    async (type: 'good' | 'bad', postId: number) => {
+      setLottieType(type);
+      setTimeout(() => {
+        setLottieType(null);
+      }, 1000);
+      if (type === 'good') {
+        await postEvaluate('LIKE', postId);
+      } else {
+        await postEvaluate('DISLIKE', postId);
+      }
+    },
+    [setLottieType],
+  );
+
+  const likeCount = 1;
+
+  const dislikeCount = 2;
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          backgroundColor: '#17171B',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.mainPostContainer}>
       <ScrollView style={styles.scrollViewContainer}>
         <View style={styles.imageContainer}>
-          <Carousel
-            width={width}
-            height={480}
-            data={[
-              {
-                imgUrl:
-                  'https://raw.githubusercontent.com/dohooo/react-native-reanimated-carousel/HEAD/assets/home-banner.png',
-              },
-            ]}
-            scrollAnimationDuration={1000}
-            onSnapToItem={index => console.log('current index:', index)}
-            renderItem={({item}) => (
-              <ImageBackground
-                source={{uri: item.imgUrl}}
-                resizeMode="cover"
-                style={{height: 480}}
+          {myPost && (
+            <View style={{height: 480, width}}>
+              <ImageCard
+                title={myPost.title}
+                imgs={myPost.imgs}
+                goPostScreen={() => {}}
+                postId={id}
+                hideLinearHeight={true}
               />
-            )}
-          />
+            </View>
+          )}
           <View style={styles.evaluateButtonContainer}>
-            <EvaluateButton type="hmm" onPress={onPressLottie('bad')} />
-            <EvaluateButton type="good" onPress={onPressLottie('good')} />
+            <EvaluateButton
+              type="hmm"
+              onPress={() => {
+                onPressLottie('bad', id);
+              }}
+            />
+            <EvaluateButton
+              type="good"
+              onPress={() => {
+                onPressLottie('good', id);
+              }}
+            />
           </View>
         </View>
         <View style={styles.bottomContainer}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>제목이 한 줄일 경우...</Text>
+            <Text style={styles.title}>{myPost?.title}</Text>
           </View>
 
           <View style={styles.tagContainer}>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
+            {myPost?.hashtags.map(tag => (
+              <View style={{marginRight: 8}} key={tag}>
+                <Tag text={tag} />
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.goodOrBadContainer}>
+            <View style={{...styles.goodOrBadButton, marginRight: 10}}>
+              <Image source={GoodImage} style={styles.goodOrBadImage} />
+              <Text style={styles.goodOrBadButtonText}>{likeCount}</Text>
             </View>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
-            </View>
-            <View style={{marginRight: 8}}>
-              <Tag text="test" />
+            <View style={styles.goodOrBadButton}>
+              <Image source={BadImage} style={styles.goodOrBadImage} />
+              <Text style={styles.goodOrBadButtonText}>{dislikeCount}</Text>
             </View>
           </View>
 
           <View style={styles.contentContainer}>
-            <Text style={styles.contentText}>
-              이번주에 친구들이랑 강릉 여행가는데 어떤 옷을 입을지 고민되네여,,,
-              이렇게 입고 가면 추울까요? 1번 룩과 2번 룩 중에 골라주세요. 글자
-              수 100자로 제한
-            </Text>
+            <Text style={styles.contentText}>{myPost?.description}</Text>
           </View>
 
           <View style={styles.commentContainer}>
@@ -92,10 +141,8 @@ export function MainPostScreen() {
             </View>
             <View style={styles.commentBottomContainer}>
               <View style={styles.commentBottomCommentContainer}>
-                <Text style={styles.nickname}>네이버 닉네임</Text>
-                <Text style={styles.comment}>
-                  ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
-                </Text>
+                <Text style={styles.nickname} />
+                <Text style={styles.comment} />
               </View>
             </View>
           </View>

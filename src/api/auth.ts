@@ -1,14 +1,33 @@
 import axios from './core';
+
+export interface SocialLoginResponse {
+  nickname: string;
+  accessToken: string;
+  refreshToken: string;
+  isNewUser: boolean;
+  userId: number;
+}
+
 export const requestGetNaverLogin = async (accessToken: string) => {
-  return axios.post(
-    '/auth/naver',
-    {},
-    {
-      headers: {
-        socialToken: `Bearer ${accessToken}`,
+  try {
+    const response = await fetch(
+      'https://omoji-server-vo2dfmd2vq-du.a.run.app/api/v1/auth/naver',
+      {
+        method: 'POST',
+        headers: {
+          socialToken: `Bearer ${accessToken}`,
+        },
       },
-    },
-  );
+    );
+
+    if (response.ok) {
+      return (await response.json()) as SocialLoginResponse;
+    }
+
+    throw Error('Apple Login Failed');
+  } catch (e) {
+    throw e;
+  }
 };
 
 interface RefreshResponse {
@@ -47,14 +66,6 @@ export const requestPostLogout = async () => {
   return axios.post('/auth/logout');
 };
 
-export interface AppleLoginResponse {
-  nickname: string;
-  accessToken: string;
-  refreshToken: string;
-  isNewUser: boolean;
-  userId: number;
-}
-
 export const requestPostAppleLogin = async (socialToken: string) => {
   try {
     const response = await fetch(
@@ -67,10 +78,8 @@ export const requestPostAppleLogin = async (socialToken: string) => {
       },
     );
 
-    console.log(response);
-
     if (response.ok) {
-      return (await response.json()) as AppleLoginResponse;
+      return (await response.json()) as SocialLoginResponse;
     }
 
     throw Error('Apple Login Failed');

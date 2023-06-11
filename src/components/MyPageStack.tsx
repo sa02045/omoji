@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MyPageScreen} from '../screens/MyPageScreen';
 import {SettingScreen} from '../screens/SettingScreen';
 import {MyPostScreen} from '../screens/MyPostScreen';
+import {MyPageNickNameScreen} from '../screens/MyPageNickNameScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export function MyPageStack() {
         component={MyPostScreen}
         options={{headerTitle: ''}}
       />
+      <Stack.Screen name="NickName" component={MyPageNickNameScreen} />
     </Stack.Navigator>
   );
 }

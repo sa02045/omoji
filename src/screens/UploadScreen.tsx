@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useLayoutEffect, useMemo, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,11 +10,13 @@ import {
   Alert,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {launchImageLibrary} from 'react-native-image-picker';
 import CustomIcon from '../components/CustomIcon';
 import {requestPostPosts} from '../api/post';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 export interface Asset {
   base64?: string;
@@ -35,12 +37,18 @@ const {width} = Dimensions.get('window');
 
 const Events = ['결혼식', '여행', '휴가', '데이트', '학교', '출근', '데일리'];
 
+type StackParamList = {
+  Main: undefined;
+};
+
 export function UploadScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [allEvents, setAllEvents] = useState<string[]>([]);
   const [images, setImages] = useState<Asset[]>([]);
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<StackParamList>>();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const HeaderLeft = useCallback(() => {
     return (
@@ -66,6 +74,34 @@ export function UploadScreen() {
   }, [title]);
 
   const HeaderRight = useCallback(() => {
+    async function fetchUploadPost() {
+      const postData = new FormData();
+      postData.append('title', title);
+      postData.append('description', description);
+      postData.append('events', allEvents);
+
+      images.forEach(image => {
+        postData.append('imgs', {
+          name: image.fileName,
+          type: image.type,
+          uri: image.uri?.replace('file://', ''),
+        });
+      });
+      try {
+        setIsLoading(true);
+        await requestPostPosts(postData);
+        setImages([]);
+        setTitle('');
+        setDescription('');
+        setAllEvents([]);
+      } catch (e) {
+        Alert.alert('에러가 발생했습니다.', JSON.stringify(e));
+      } finally {
+        navigation.navigate('Main');
+        setIsLoading(false);
+      }
+    }
+
     return (
       <Pressable
         onPress={async () => {
@@ -73,14 +109,22 @@ export function UploadScreen() {
             return;
           }
           await fetchUploadPost();
-          // navigation.navigate('Main');
+          navigation.navigate('Main');
         }}>
         <Text style={{color: isValid ? '#AF68FF' : '#fff', marginRight: 16}}>
           완료
         </Text>
       </Pressable>
     );
-  }, [navigation, validateUpload, isValid]);
+  }, [
+    isValid,
+    validateUpload,
+    navigation,
+    title,
+    description,
+    images,
+    allEvents,
+  ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -98,38 +142,19 @@ export function UploadScreen() {
     });
   }, [HeaderRight, HeaderLeft, navigation]);
 
-  // const [allImages, setAllImages] = useState<string[]>([]);
-
-  // async function uploadPost() {
-  //   const postData = new FormData();
-  //   postData.append('title', title);
-  //   postData.append('description', description);
-  //   postData.append('events', allEvents);
-  // }
-
-  async function fetchUploadPost() {
-    const postData = new FormData();
-    postData.append('title', title);
-    postData.append('description', description);
-    postData.append('events', allEvents);
-
-    images.forEach(image => {
-      postData.append('imgs', {
-        name: image.fileName,
-        type: image.type,
-        uri: image.uri?.replace('file://', ''),
-      });
-    });
-    try {
-      await requestPostPosts(postData);
-      setImages([]);
-      setTitle('');
-      setDescription('');
-      setAllEvents([]);
-      navigation.navigate('Main');
-    } catch (e) {
-      Alert.alert('에러가 발생했습니다.', JSON.stringify(e));
-    }
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          backgroundColor: '#17171B',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
