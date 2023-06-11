@@ -139,6 +139,7 @@ export function MyPageScreen() {
 const styles = StyleSheet.create({
   myPageScreenContainer: {
     backgroundColor: '#17171B',
+    flex: 1,
   },
   topContainer: {
     paddingLeft: 20,
