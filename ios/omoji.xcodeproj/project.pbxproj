@@ -10,7 +10,7 @@
 		00E356F31AD99517003FC87E /* omojiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* omojiTests.m */; };
 		01369DA400044F98A22C74A0 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = FED44F1D3DB343989AEBBF5E /* Pretendard-Thin.otf */; };
 		0C80B921A6F3F58F76C31292 /* libPods-omoji.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-omoji.a */; };
-		0DC8F9E22A34B30200961B92 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DC8F9E12A34B30200961B92 /* Images.xcassets */; };
+		0DC8F9EB2A38ED1A00961B92 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0DC8F9EA2A38ED1A00961B92 /* Images.xcassets */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		25CC0784F2314C1A8A09B2DF /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0BD9EFBD0A964830A2BF397D /* Pretendard-Regular.otf */; };
@@ -41,7 +41,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* omojiTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = omojiTests.m; sourceTree = "<group>"; };
 		0BD9EFBD0A964830A2BF397D /* Pretendard-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Regular.otf"; path = "../src/assets/fonts/Pretendard-Regular.otf"; sourceTree = "<group>"; };
-		0DC8F9E12A34B30200961B92 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../../../../.Trash/Images.xcassets; sourceTree = "<group>"; };
+		0DC8F9EA2A38ED1A00961B92 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0DCDA8B92A0FAF4900FD8812 /* omoji.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = omoji.entitlements; path = omoji/omoji.entitlements; sourceTree = "<group>"; };
 		0DCDA8BA2A0FC0F700FD8812 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		12AF158A01D94C9A9DDB49F0 /* Pretendard-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-ExtraLight.otf"; path = "../src/assets/fonts/Pretendard-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -108,13 +108,13 @@
 		13B07FAE1A68108700A75B9A /* omoji */ = {
 			isa = PBXGroup;
 			children = (
-				0DC8F9E12A34B30200961B92 /* Images.xcassets */,
 				0DCDA8B92A0FAF4900FD8812 /* omoji.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				0DC8F9EA2A38ED1A00961B92 /* Images.xcassets */,
 			);
 			name = omoji;
 			sourceTree = "<group>";
@@ -287,6 +287,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				DDC7F4C10E474598852B448D /* icomoon.ttf in Resources */,
+				0DC8F9EB2A38ED1A00961B92 /* Images.xcassets in Resources */,
 				C3EE3BFA191B4BD1926732AD /* Pretendard-Black.otf in Resources */,
 				4D9CB41CE1CD4CBAB114AE2C /* Pretendard-Bold.otf in Resources */,
 				E31AD102D5E24606970FBE8C /* Pretendard-ExtraBold.otf in Resources */,
@@ -294,7 +295,6 @@
 				D9EB209B7C5A4E75B1691945 /* Pretendard-Light.otf in Resources */,
 				BACC636E0FE9488AA00E278D /* Pretendard-Medium.otf in Resources */,
 				25CC0784F2314C1A8A09B2DF /* Pretendard-Regular.otf in Resources */,
-				0DC8F9E22A34B30200961B92 /* Images.xcassets in Resources */,
 				E449098091E34CA1A3AB5C3C /* Pretendard-SemiBold.otf in Resources */,
 				01369DA400044F98A22C74A0 /* Pretendard-Thin.otf in Resources */,
 			);
