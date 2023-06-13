@@ -105,7 +105,7 @@ export function UploadScreen() {
             return;
           }
           if (!images.length) {
-            Alert.alert('내용을 입력해주세요.');
+            Alert.alert('이미지를 업로드해주세요.');
             return;
           }
           await fetchUploadPost();

@@ -6,7 +6,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -14,8 +14,9 @@ import {FlatList} from 'react-native-gesture-handler';
 import {MyPageImageCard} from '../components/MyPageImageCard';
 import {fetchMyPosts} from '../api/post';
 import {useQuery} from '@tanstack/react-query';
-import EncryptedStorage from 'react-native-encrypted-storage';
-import {NICKNAME_KEY} from '../api/core';
+import {useRecoilState} from 'recoil';
+import {nicknameSelector} from '../atoms/NickNameAtom';
+
 type StackParamList = {
   MyPost: {id: number};
   Setting: undefined;
@@ -24,17 +25,7 @@ type StackParamList = {
 
 export function MyPageScreen() {
   const navigator = useNavigation<StackNavigationProp<StackParamList>>();
-  const [nickname, setNickname] = useState('');
-
-  useEffect(() => {
-    async function getNickname() {
-      const myNickName = await EncryptedStorage.getItem(NICKNAME_KEY);
-      if (myNickName) {
-        setNickname(myNickName);
-      }
-    }
-    getNickname();
-  }, []);
+  const [nickname] = useRecoilState(nicknameSelector);
 
   const {
     data: myPosts,

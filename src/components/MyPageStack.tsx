@@ -5,6 +5,7 @@ import {MyPageScreen} from '../screens/MyPageScreen';
 import {SettingScreen} from '../screens/SettingScreen';
 import {MyPostScreen} from '../screens/MyPostScreen';
 import {MyPageNickNameScreen} from '../screens/MyPageNickNameScreen';
+import {ResignScreen} from '../screens/ResignScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,11 @@ export function MyPageStack() {
         options={{headerTitle: ''}}
       />
       <Stack.Screen name="NickName" component={MyPageNickNameScreen} />
+      <Stack.Screen
+        name="Resign"
+        component={ResignScreen}
+        options={{headerTitle: '탈퇴하기'}}
+      />
     </Stack.Navigator>
   );
 }

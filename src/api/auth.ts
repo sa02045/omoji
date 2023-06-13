@@ -97,3 +97,7 @@ export async function requestPatchProfile(nickname: string) {
 export async function requestGetProfile() {
   return axios.get('/profile');
 }
+
+export async function requestPostResign() {
+  return axios.post('/auth/resign');
+}

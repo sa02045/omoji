@@ -1,10 +1,19 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type StackParamList = {
+  Resign: undefined;
+};
+
 export function SettingScreen() {
   const [_, setLogin] = useRecoilState(loginAtom);
+  const navigation = useNavigation<StackNavigationProp<StackParamList>>();
+
   return (
     <View style={styles.container}>
       <View>
@@ -12,9 +21,20 @@ export function SettingScreen() {
           <View style={styles.row}>
             <Pressable
               onPress={() => {
-                EncryptedStorage.removeItem('accessToken');
-                EncryptedStorage.removeItem('refreshToken');
-                setLogin(false);
+                Alert.alert('로그아웃', '로그아웃하시겠어요?', [
+                  {
+                    text: '취소',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '로그아웃',
+                    onPress: () => {
+                      EncryptedStorage.removeItem('accessToken');
+                      EncryptedStorage.removeItem('refreshToken');
+                      setLogin(false);
+                    },
+                  },
+                ]);
               }}>
               <Text style={styles.text}>로그아웃</Text>
             </Pressable>
@@ -22,9 +42,18 @@ export function SettingScreen() {
           <View style={styles.row}>
             <Pressable
               onPress={() => {
-                EncryptedStorage.removeItem('accessToken');
-                EncryptedStorage.removeItem('refreshToken');
-                setLogin(false);
+                Alert.alert('회원탈퇴', '정말 탈퇴하시겠어요?', [
+                  {
+                    text: '취소',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '회원탈퇴',
+                    onPress: () => {
+                      navigation.navigate('Resign');
+                    },
+                  },
+                ]);
               }}>
               <Text style={styles.text}>탈퇴하기</Text>
             </Pressable>

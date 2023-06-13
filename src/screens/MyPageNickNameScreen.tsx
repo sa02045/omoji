@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useLayoutEffect, useState} from 'react';
 import {
   Alert,
   Pressable,
@@ -12,43 +12,76 @@ import {requestPatchProfile} from '../api/auth';
 
 import {NICKNAME_KEY} from '../api/core';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import CustomIcon from '../components/CustomIcon';
+import {useRecoilState} from 'recoil';
+import {nicknameSelector} from '../atoms/NickNameAtom';
 
 export function MyPageNickNameScreen() {
   const navigation = useNavigation();
+  const [inputValue, setInputValue] = useState('');
+  const [nickname, setNickname] = useRecoilState(nicknameSelector);
 
-  const [nickname, setNickname] = useState('');
+  const HeaderLeft = useCallback(() => {
+    return (
+      <Pressable
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <CustomIcon name="iconArrowLeft" color="#fff" size={24} />
+      </Pressable>
+    );
+  }, [navigation]);
 
-  async function onPressButton() {
-    try {
-      await requestPatchProfile(nickname);
-      await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
-      navigation.goBack();
-    } catch (e) {
-      Alert.alert('닉네임 설정 실패', JSON.stringify(e));
+  const HeaderRight = useCallback(() => {
+    async function onPressButton() {
+      try {
+        await requestPatchProfile(nickname);
+        await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
+        navigation.goBack();
+        setNickname(inputValue);
+        setInputValue('');
+      } catch (e) {
+        Alert.alert('닉네임 설정 실패', JSON.stringify(e));
+      }
     }
-  }
+
+    return (
+      <Pressable style={{padding: 12}} onPress={onPressButton}>
+        <Text style={{color: nickname ? '#AF68FF' : '#fff'}}>완료</Text>
+      </Pressable>
+    );
+  }, [nickname, navigation, setNickname, setInputValue, inputValue]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: '',
+      headerStyle: {
+        backgroundColor: '#17171B',
+        shadowColor: '#17171B',
+      },
+      headerTitleStyle: {
+        color: '#fff',
+      },
+      headerLeft: HeaderLeft,
+      headerRight: HeaderRight,
+    });
+  }, [HeaderLeft, HeaderRight, navigation]);
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={styles.text}>닉네임을 수정해주세요</Text>
+      <View style={{marginTop: 16}}>
+        <Text style={styles.text}>닉네임</Text>
       </View>
       <View style={styles.nicknameContainer}>
         <TextInput
-          placeholder="닉네임"
+          placeholder="닉네임 수정"
           style={styles.input}
           placeholderTextColor="#fff"
           maxLength={9}
-          onChangeText={setNickname}
-          value={nickname}
+          onChangeText={setInputValue}
+          value={inputValue}
         />
-      </View>
-      <View>
-        <Pressable onPress={onPressButton}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>확인</Text>
-          </View>
-        </Pressable>
       </View>
     </View>
   );
@@ -64,6 +97,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   nicknameContainer: {
     marginTop: 20,
@@ -71,9 +105,10 @@ const styles = StyleSheet.create({
   input: {
     color: '#fff',
     borderColor: '#fff',
-    fontSize: 24,
-    borderBottomColor: '#fff',
-    borderBottomWidth: 1,
+    fontSize: 16,
+    borderRadius: 8,
+    backgroundColor: '#282828',
+    padding: 12,
   },
   button: {
     marginTop: 20,
