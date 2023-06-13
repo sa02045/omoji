@@ -20,7 +20,6 @@ import {EvaluateButton} from '../components/EvaluateButton';
 import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
 import {postEvaluate} from '../api/evaluate';
-
 type Params = {
   id: number;
 };
@@ -38,10 +37,27 @@ export function MainPostScreen() {
     },
   });
 
+  // const {data: comments, refetch} = useQuery({
+  //   queryKey: ['postComments', id],
+  //   queryFn: async () => {
+  //     const {data} = await requestGetComments(id);
+  //     return data;
+  //   },
+  // });
+
   const onPressPostComment = async () => {
     await postCommentById(id, commentText);
     setCommentText('');
   };
+
+  // const onPressPostComment = async () => {
+  //   try {
+  //     await postCommentById(id, commentText);
+  //     setCommentText('');
+  //   } catch (e) {
+  //   } finally {
+  //   }
+  // };
 
   const onPressLottie = useCallback(
     async (type: 'good' | 'bad', postId: number) => {
@@ -57,10 +73,6 @@ export function MainPostScreen() {
     },
     [setLottieType],
   );
-
-  const likeCount = 1;
-
-  const dislikeCount = 2;
 
   if (isLoading) {
     return (
@@ -123,11 +135,15 @@ export function MainPostScreen() {
           <View style={styles.goodOrBadContainer}>
             <View style={{...styles.goodOrBadButton, marginRight: 10}}>
               <Image source={GoodImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>{likeCount}</Text>
+              <Text style={styles.goodOrBadButtonText}>
+                {myPost?.likeCount}
+              </Text>
             </View>
             <View style={styles.goodOrBadButton}>
               <Image source={BadImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>{dislikeCount}</Text>
+              <Text style={styles.goodOrBadButtonText}>
+                {myPost?.dislikeCount}
+              </Text>
             </View>
           </View>
 
@@ -139,10 +155,11 @@ export function MainPostScreen() {
             <View style={styles.commentTopContainer}>
               <Text style={styles.CommentTitle}>댓글</Text>
             </View>
+
             <View style={styles.commentBottomContainer}>
               <View style={styles.commentBottomCommentContainer}>
                 <Text style={styles.nickname} />
-                <Text style={styles.comment} />
+                <Text style={styles.comment}>comment</Text>
               </View>
             </View>
           </View>

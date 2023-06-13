@@ -5,7 +5,6 @@ import {Navigation} from './components/Navigation';
 import {RecoilRoot} from 'recoil';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import 'react-native-gesture-handler';
-
 const queryClient = new QueryClient();
 
 function App(): JSX.Element {

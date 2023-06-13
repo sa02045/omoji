@@ -17,7 +17,6 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import CustomIcon from '../components/CustomIcon';
 import {requestPostPosts} from '../api/post';
 import {StackNavigationProp} from '@react-navigation/stack';
-
 export interface Asset {
   base64?: string;
   uri?: string;
@@ -50,28 +49,20 @@ export function UploadScreen() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const HeaderLeft = useCallback(() => {
-    return (
-      <Pressable
-        onPress={() => {
-          navigation.goBack();
-        }}>
-        <Text style={{color: '#fff', marginLeft: 16}}>취소</Text>
-      </Pressable>
-    );
-  }, [navigation]);
-
   const isValid =
     title.length > 0 && description.length > 0 && images.length > 0;
 
-  const validateUpload = useCallback(() => {
-    if (!title.length) {
-      Alert.alert('제목을 입력해주세요.');
-      return false;
-    }
-
-    return true;
-  }, [title]);
+  const HeaderLeft = useCallback(() => {
+    return (
+      <Pressable
+        style={{padding: 12}}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <CustomIcon name="iconArrowLeft" color="#fff" size={24} />
+      </Pressable>
+    );
+  }, [navigation]);
 
   const HeaderRight = useCallback(() => {
     async function fetchUploadPost() {
@@ -105,7 +96,16 @@ export function UploadScreen() {
     return (
       <Pressable
         onPress={async () => {
-          if (!validateUpload()) {
+          if (!title.length) {
+            Alert.alert('제목을 입력해주세요.');
+            return;
+          }
+          if (!description.length) {
+            Alert.alert('내용을 입력해주세요.');
+            return;
+          }
+          if (!images.length) {
+            Alert.alert('내용을 입력해주세요.');
             return;
           }
           await fetchUploadPost();
@@ -116,15 +116,7 @@ export function UploadScreen() {
         </Text>
       </Pressable>
     );
-  }, [
-    isValid,
-    validateUpload,
-    navigation,
-    title,
-    description,
-    images,
-    allEvents,
-  ]);
+  }, [isValid, navigation, title, description, images, allEvents]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

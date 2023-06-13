@@ -37,12 +37,8 @@ export function MyPostScreen() {
   });
 
   const onPressPostComment = async () => {
-    try {
-      await postCommentById(id, commentText);
-      setCommentText('');
-    } catch (e) {
-      console.log(e);
-    }
+    await postCommentById(id, commentText);
+    setCommentText('');
   };
 
   if (isLoading) {
@@ -70,8 +66,6 @@ export function MyPostScreen() {
               height={480}
               data={myPost.imgs}
               loop={false}
-              scrollAnimationDuration={1000}
-              onSnapToItem={index => console.log('current index:', index)}
               renderItem={({item}) => (
                 <ImageBackground
                   source={{uri: item}}

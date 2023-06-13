@@ -1,6 +1,6 @@
 import axios from './core';
 
-interface Evaluate {
+export interface Evaluate {
   id: number;
   imgs: string[];
   title: string;

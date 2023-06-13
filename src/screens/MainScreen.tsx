@@ -2,20 +2,20 @@ import {
   Dimensions,
   StyleSheet,
   View,
+  ActivityIndicator,
   Text,
-  Pressable,
-  Button,
 } from 'react-native';
+import Swiper from 'react-native-deck-swiper';
+
 import {EvaluateButton} from '../components/EvaluateButton';
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import React from 'react';
 import {Lottie} from '../components/Lottie';
-import {useQuery} from '@tanstack/react-query';
-import {ImageCard} from '../components/ImageCard';
-import {fetchEvaluate, postEvaluate} from '../api/evaluate';
-import Swiper from 'react-native-deck-swiper';
+import {fetchEvaluate} from '../api/evaluate';
+import type {Evaluate} from '../api/evaluate';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {MySwiper} from '../components/MySwiper';
 export interface Product {
   id: number;
   title: string;
@@ -37,12 +37,17 @@ type MainStackList = {
   };
 };
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 export function MainScreen() {
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
   const {navigate} = useNavigation<StackNavigationProp<MainStackList>>();
-  const ref = useRef<any>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [cards, setCards] = useState<Evaluate[]>([]);
+  const [deletedCards, setDeleteCards] = useState<Evaluate[]>([]);
+  const swiperRef = useRef<Swiper<Evaluate>>(null);
+
   const onPressLottie = useCallback(
     async (type: 'good' | 'bad') => {
       setLottieType(type);
@@ -53,82 +58,56 @@ export function MainScreen() {
     [setLottieType],
   );
 
-  const {
-    data: evaluatePosts,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['evaluatePosts'],
-    queryFn: async () => {
+  useEffect(() => {
+    if (cards.length === 0) {
+      try {
+        setIsLoading(true);
+        fetchEvaluatePosts();
+      } catch (e) {
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    async function fetchEvaluatePosts() {
       const posts = await fetchEvaluate();
-      return posts;
-    },
-  });
+      setCards(posts);
+    }
+  }, [cards]);
 
   if (isLoading) {
-    return <Text>로딩중</Text>;
-  }
-
-  if (error) {
-    return <Text>에러</Text>;
+    return (
+      <View
+        style={{
+          backgroundColor: '#17171B',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      {evaluatePosts?.length ? (
-        <Swiper
-          cards={evaluatePosts || []}
-          cardStyle={{width: width, height: '100%'}}
-          marginTop={0}
-          marginBottom={0}
-          cardVerticalMargin={0}
-          cardHorizontalMargin={0}
-          containerStyle={{
-            backgroundColor: 'transparent',
+      {cards.length ? (
+        <MySwiper
+          items={cards}
+          setCards={setCards}
+          ref={swiperRef}
+          onSwipedTop={() => {
+            onPressLottie('good');
           }}
-          // onSwipedTop={cardIndex => {
-          //   evaluatePosts.find((item, index) => {
-          //     if (index === cardIndex) {
-          //       const postId = Number(item.id);
-          //       onPressLottie('good');
-          //     }
-          //   });
-          // }}
-          // onSwipedBottom={cardIndex => {
-          //   evaluatePosts.find((item, index) => {
-          //     if (index === cardIndex) {
-          //       // const postId = Number(item.id);
-          //       onPressLottie('bad');
-          //     }
-          //   });
-          // }}
-          // onTapCard={cardIndex => {
-          //   console.log(cardIndex);
-          // }}
-          renderCard={item => {
-            return (
-              <Pressable
-                onPress={() => {
-                  console.log('hello');
-                }}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}>
-                <ImageCard
-                  title={item?.title || ''}
-                  imgs={item?.imgs || []}
-                  goPostScreen={() => {
-                    navigate('MainPost', {
-                      id: Number(item.id),
-                    });
-                  }}
-                  postId={Number(item.id)}
-                />
-              </Pressable>
-            );
+          onSwipedBottom={() => {
+            onPressLottie('bad');
           }}
+          navigatePostScreen={(postId: number) => {
+            navigate('MainPost', {id: postId});
+          }}
+          setDeleteCards={setDeleteCards}
+          deletedCards={deletedCards}
         />
       ) : (
         <View
@@ -138,34 +117,26 @@ export function MainScreen() {
             justifyContent: 'center',
             flex: 1,
           }}>
-          <View>
-            <Text style={{color: '#fff'}}>아직 글이 없어요.</Text>
-          </View>
-          <Pressable
-            onPress={() => {
-              refetch();
-            }}>
-            <Button title="글 불러오기" color={'#fff'} />
-          </Pressable>
+          <Text style={{color: '#fff'}}>아직 글이 없어요</Text>
         </View>
       )}
 
-      {evaluatePosts?.length ? (
+      {cards.length ? (
         <View style={styles.buttonContainer}>
           <EvaluateButton
             type="hmm"
             onPress={() => {
-              if (ref.current) {
-                onPressLottie('bad');
-                ref.current.swipeBottom();
+              if (swiperRef.current) {
+                swiperRef.current.swipeBottom();
               }
             }}
           />
           <EvaluateButton
             type="good"
             onPress={() => {
-              onPressLottie('good');
-              ref.current.swipeTop();
+              if (swiperRef.current) {
+                swiperRef.current.swipeTop();
+              }
             }}
           />
         </View>
