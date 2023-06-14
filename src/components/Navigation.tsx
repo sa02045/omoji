@@ -22,6 +22,7 @@ export function Navigation() {
 
       if (!accessToken) {
         setLogin(false);
+        setIsLoading(false);
       }
 
       if (accessToken && refToken) {
