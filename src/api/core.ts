@@ -1,11 +1,7 @@
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-import {requestRefresh} from './auth';
-
-export const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
-export const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY';
-export const NICKNAME_KEY = 'NICKNAME_KEY';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../constants/key';
 
 const instance = axios.create({
   baseURL: 'https://omoji-server-vo2dfmd2vq-du.a.run.app/api/v1',

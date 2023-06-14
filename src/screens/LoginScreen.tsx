@@ -3,7 +3,12 @@ import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, NICKNAME_KEY} from '../api/core';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  NICKNAME_KEY,
+} from '../constants/key';
+
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
 import Config from 'react-native-config';

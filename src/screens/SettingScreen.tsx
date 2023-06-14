@@ -5,6 +5,7 @@ import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../constants/key';
 
 type StackParamList = {
   Resign: undefined;
@@ -29,8 +30,8 @@ export function SettingScreen() {
                   {
                     text: '로그아웃',
                     onPress: () => {
-                      EncryptedStorage.removeItem('accessToken');
-                      EncryptedStorage.removeItem('refreshToken');
+                      EncryptedStorage.removeItem(ACCESS_TOKEN_KEY);
+                      EncryptedStorage.removeItem(REFRESH_TOKEN_KEY);
                       setLogin(false);
                     },
                   },

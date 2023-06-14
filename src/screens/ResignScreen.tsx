@@ -5,7 +5,8 @@ import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
 import {requestPostResign} from '../api/auth';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../api/core';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../constants/key';
+
 export function ResignScreen() {
   const [_, setLogin] = useRecoilState(loginAtom);
   return (

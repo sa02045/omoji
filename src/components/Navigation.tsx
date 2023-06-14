@@ -6,7 +6,7 @@ import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {requestRefresh} from '../api/auth';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../api/core';
+import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../constants/key';
 import {ActivityIndicator, View} from 'react-native';
 
 export function Navigation() {
