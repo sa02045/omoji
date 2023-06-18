@@ -10,7 +10,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {requestPatchProfile} from '../api/auth';
 
-import {NICKNAME_KEY} from '../api/core';
+import StorageKey from '../constants/StorageKey';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import CustomIcon from '../components/CustomIcon';
 import {useRecoilState} from 'recoil';
@@ -36,7 +36,7 @@ export function MyPageNickNameScreen() {
     async function onPressButton() {
       try {
         await requestPatchProfile(nickname);
-        await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
+        await EncryptedStorage.setItem(StorageKey.NICKNAME_KEY, nickname);
         navigation.goBack();
         setNickname(inputValue);
         setInputValue('');
