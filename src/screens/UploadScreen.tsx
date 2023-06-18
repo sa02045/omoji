@@ -100,10 +100,6 @@ export function UploadScreen() {
             Alert.alert('제목을 입력해주세요.');
             return;
           }
-          if (!description.length) {
-            Alert.alert('내용을 입력해주세요.');
-            return;
-          }
           if (!images.length) {
             Alert.alert('이미지를 업로드해주세요.');
             return;
