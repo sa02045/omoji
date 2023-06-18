@@ -38,6 +38,7 @@ const Events = ['결혼식', '여행', '휴가', '데이트', '학교', '출근'
 
 type StackParamList = {
   Main: undefined;
+  MyPageStack: undefined;
 };
 
 export function UploadScreen() {
@@ -88,7 +89,7 @@ export function UploadScreen() {
       } catch (e) {
         Alert.alert('에러가 발생했습니다.', JSON.stringify(e));
       } finally {
-        navigation.navigate('Main');
+        navigation.navigate('MyPageStack');
         setIsLoading(false);
       }
     }
@@ -105,7 +106,6 @@ export function UploadScreen() {
             return;
           }
           await fetchUploadPost();
-          navigation.navigate('Main');
         }}>
         <Text style={{color: isValid ? '#AF68FF' : '#fff', marginRight: 16}}>
           완료
