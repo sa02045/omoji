@@ -35,6 +35,9 @@ export function MyPageNickNameScreen() {
   const HeaderRight = useCallback(() => {
     async function onPressButton() {
       try {
+        if (nickname.length < 3) {
+          Alert.alert('닉네임은 두글자 이상으로 해주세요!');
+        }
         await requestPatchProfile(nickname);
         await EncryptedStorage.setItem(StorageKey.NICKNAME_KEY, nickname);
         navigation.goBack();
