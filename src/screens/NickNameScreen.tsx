@@ -26,6 +26,9 @@ export function NickNameScreen() {
 
   async function onPressButton() {
     try {
+      if (nickname.length < 3) {
+        Alert.alert('닉네임은 두글자 이상으로 해주세요!');
+      }
       await requestPatchProfile(nickname);
       await EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
       navigate('Preview');
