@@ -128,6 +128,7 @@ export function LoginScreen() {
       </View>
       <View style={styles.loginButtonContainer}>
         <Pressable
+          onPress={onPressAppleLogin}
           style={{
             flexDirection: 'row',
             backgroundColor: '#fff',
@@ -153,13 +154,12 @@ export function LoginScreen() {
                 fontWeight: 'bold',
                 textAlign: 'center',
                 marginLeft: 56,
-              }}
-              onPress={onPressAppleLogin}>
+              }}>
               Apple로 시작하기
             </Text>
           </View>
         </Pressable>
-        <Pressable style={styles.loginContainer}>
+        <Pressable style={styles.loginContainer} onPress={onPressNaverLogin}>
           <View
             style={{
               width: '100%',
@@ -178,8 +178,7 @@ export function LoginScreen() {
                 color: '#fff',
                 textAlign: 'center',
                 marginLeft: 56,
-              }}
-              onPress={onPressNaverLogin}>
+              }}>
               네이버로 시작하기
             </Text>
           </View>
