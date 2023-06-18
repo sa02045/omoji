@@ -11,8 +11,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {requestPatchProfile} from '../api/auth';
 
-import {NICKNAME_KEY} from '../api/core';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import STORAGE_KEY from '../constants/StorageKey';
 
 type StackParamList = {
   Login: undefined;
@@ -27,7 +27,7 @@ export function NickNameScreen() {
   async function onPressButton() {
     try {
       await requestPatchProfile(nickname);
-      await EncryptedStorage.setItem(NICKNAME_KEY, nickname);
+      await EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
       navigate('Preview');
     } catch (e) {
       Alert.alert('닉네임 설정 실패', JSON.stringify(e));
