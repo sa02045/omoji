@@ -6,7 +6,7 @@ import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {requestRefresh} from '../api/auth';
-import {ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY} from '../constants/key';
+import STORAGE_KEY from '../constants/StorageKey';
 import {ActivityIndicator, View} from 'react-native';
 
 export function Navigation() {
@@ -17,8 +17,12 @@ export function Navigation() {
   useEffect(() => {
     async function refreshToken() {
       setIsLoading(true);
-      const accessToken = await EncryptedStorage.getItem(ACCESS_TOKEN_KEY);
-      const refToken = await EncryptedStorage.getItem(REFRESH_TOKEN_KEY);
+      const accessToken = await EncryptedStorage.getItem(
+        STORAGE_KEY.ACCESS_TOKEN_KEY,
+      );
+      const refToken = await EncryptedStorage.getItem(
+        STORAGE_KEY.REFRESH_TOKEN_KEY,
+      );
 
       if (!accessToken) {
         setLogin(false);
@@ -32,7 +36,10 @@ export function Navigation() {
             refToken,
           );
 
-          await EncryptedStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+          await EncryptedStorage.setItem(
+            STORAGE_KEY.REFRESH_TOKEN_KEY,
+            newRefreshToken,
+          );
           setLogin(true);
         } catch (e) {
           setLogin(false);
