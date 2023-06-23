@@ -8,25 +8,39 @@ import {
   Image,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Tag} from '../components/Tag';
 import BadImage from '../assets/hmm.png';
 import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {useQuery} from '@tanstack/react-query';
-import {fetchPostById, postCommentById} from '../api/post';
+import {
+  fetchPostById,
+  requestDeletePostById,
+  postCommentById,
+} from '../api/post';
 import {EvaluateButton} from '../components/EvaluateButton';
 import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
 import {postEvaluate} from '../api/evaluate';
+import ThreeDotImg from '../assets/three-dot.png';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 type Params = {
   id: number;
 };
 
+type StackParamList = {
+  MyPage: undefined;
+};
+
 export function PostScreen() {
   const route = useRoute();
+  const {navigate} = useNavigation<StackNavigationProp<StackParamList>>();
+
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
@@ -44,6 +58,23 @@ export function PostScreen() {
       return data;
     },
   });
+
+  const alertDelete = useCallback(() => {
+    Alert.alert('게시글을 삭제하시겠습니까?', '', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          await requestDeletePostById(id);
+          navigate('MyPage');
+        },
+      },
+    ]);
+  }, [id, navigate]);
 
   useEffect(() => {
     if (post) {
@@ -99,7 +130,7 @@ export function PostScreen() {
     [setLottieType, evaluatedType],
   );
 
-  if (isLoading) {
+  if (isLoading || !post) {
     return (
       <View
         style={{
@@ -122,19 +153,17 @@ export function PostScreen() {
       <View style={styles.mainPostContainer}>
         <ScrollView style={styles.scrollViewContainer}>
           <View style={styles.imageContainer}>
-            {post && (
-              <View style={{height: 480, width}}>
-                <ImageCard
-                  title={post.title}
-                  imgs={post.imgs}
-                  goPostScreen={() => {}}
-                  postId={id}
-                  hideLinearHeight={true}
-                />
-              </View>
-            )}
+            <View style={{height: 480, width}}>
+              <ImageCard
+                title={post.title}
+                imgs={post.imgs}
+                goPostScreen={() => {}}
+                postId={id}
+                hideLinearHeight={true}
+              />
+            </View>
 
-            {post && !post.isOwner && (
+            {!post.isOwner && (
               <View style={styles.evaluateButtonContainer}>
                 <EvaluateButton
                   type="hmm"
@@ -153,11 +182,14 @@ export function PostScreen() {
           </View>
           <View style={styles.bottomContainer}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{post?.title}</Text>
+              <Text style={styles.title}>{post.title}</Text>
+              <Pressable style={{width: 32, height: 32}} onPress={alertDelete}>
+                <Image source={ThreeDotImg} />
+              </Pressable>
             </View>
 
             <View style={styles.tagContainer}>
-              {post?.hashtags.map(tag => (
+              {post.hashtags.map(tag => (
                 <View style={{marginRight: 8}} key={tag}>
                   <Tag text={tag} />
                 </View>
@@ -180,7 +212,7 @@ export function PostScreen() {
             </View>
 
             <View style={styles.contentContainer}>
-              <Text style={styles.contentText}>{post?.description}</Text>
+              <Text style={styles.contentText}>{post.description}</Text>
             </View>
 
             <View style={styles.commentContainer}>
@@ -260,7 +292,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
-  titleContainer: {},
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   title: {
     fontSize: 21,
     color: '#fff',

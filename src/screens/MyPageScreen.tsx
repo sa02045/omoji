@@ -1,13 +1,6 @@
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  Alert,
-  Image,
-  Pressable,
-} from 'react-native';
+import {Text, TouchableOpacity, View, Image, Pressable} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlatList} from 'react-native-gesture-handler';
@@ -31,15 +24,18 @@ export function MyPageScreen() {
     data: myPosts,
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ['myPosts'],
     queryFn: async () => {
       const posts = await fetchMyPosts();
       return posts;
     },
-    onError(err) {
-      Alert.alert('에러가 발생했습니다.', JSON.stringify(err));
-    },
+    refetchOnWindowFocus: true,
+  });
+
+  useFocusEffect(() => {
+    refetch();
   });
 
   if (isLoading) {

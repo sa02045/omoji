@@ -21,6 +21,10 @@ export const requestPutPost = async (id: string, data: any) => {
   return axios.put(`/posts/${id}`, data);
 };
 
+export const requestDeletePostById = async (id: number) => {
+  return axios.delete(`/posts/${id}`);
+};
+
 interface Post {
   id: string;
   likeCount: number;
