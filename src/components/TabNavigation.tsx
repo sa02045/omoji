@@ -4,7 +4,7 @@ import CustomIcon from './CustomIcon';
 import {MyPageStack} from './MyPageStack';
 import {UploadScreen} from '../screens/UploadScreen';
 import {useNavigation} from '@react-navigation/native';
-import {MainPostScreen} from '../screens/MainPostScreen';
+import {PostScreen} from '../screens/PostScreen';
 import {MainScreen} from '../screens/MainScreen';
 import {TouchableOpacity} from 'react-native';
 const Tab = createBottomTabNavigator();
@@ -82,7 +82,7 @@ export function TabNavigation() {
       />
       <Tab.Screen
         name="MainPost"
-        component={MainPostScreen}
+        component={PostScreen}
         options={{
           tabBarButton: () => null,
           tabBarStyle: {

@@ -48,7 +48,7 @@ interface MyPostByIdResponse {
   hashtags: string[];
 }
 
-export async function fetchMyPostById(id: number) {
+export async function fetchPostById(id: number) {
   const response = await axios.get<MyPostByIdResponse>(`/posts/${id}`);
   return response.data;
 }

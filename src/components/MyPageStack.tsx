@@ -3,7 +3,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MyPageScreen} from '../screens/MyPageScreen';
 import {SettingScreen} from '../screens/SettingScreen';
-import {MyPostScreen} from '../screens/MyPostScreen';
+import {PostScreen} from '../screens/PostScreen';
 import {MyPageNickNameScreen} from '../screens/MyPageNickNameScreen';
 import {ResignScreen} from '../screens/ResignScreen';
 
@@ -29,7 +29,7 @@ export function MyPageStack() {
       />
       <Stack.Screen
         name="MyPost"
-        component={MyPostScreen}
+        component={PostScreen}
         options={{headerTitle: ''}}
       />
       <Stack.Screen name="NickName" component={MyPageNickNameScreen} />
