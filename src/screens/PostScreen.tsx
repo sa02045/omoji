@@ -16,7 +16,7 @@ import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useRoute} from '@react-navigation/native';
 import {useQuery} from '@tanstack/react-query';
-import {fetchMyPostById, postCommentById} from '../api/post';
+import {fetchPostById, postCommentById} from '../api/post';
 import {EvaluateButton} from '../components/EvaluateButton';
 import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
@@ -25,7 +25,7 @@ type Params = {
   id: number;
 };
 
-export function MainPostScreen() {
+export function PostScreen() {
   const route = useRoute();
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
@@ -37,18 +37,18 @@ export function MainPostScreen() {
   const [goodEvaluatedCount, setGoodEvaluatedCount] = useState(0);
   const [badEvaluatedCount, setBadEvaluatedCount] = useState(0);
 
-  const {data: myPost, isLoading} = useQuery({
-    queryKey: ['myPost', id],
+  const {data: post, isLoading} = useQuery({
+    queryKey: ['post', id],
     queryFn: async () => {
-      const post = await fetchMyPostById(id);
-      return post;
+      const data = await fetchPostById(id);
+      return data;
     },
   });
 
   useEffect(() => {
-    if (myPost) {
-      setGoodEvaluatedCount(myPost.dislikeCount);
-      setBadEvaluatedCount(myPost.likeCount);
+    if (post) {
+      setGoodEvaluatedCount(post.dislikeCount);
+      setBadEvaluatedCount(post.likeCount);
     }
 
     if (evaluatedType === 'good') {
@@ -56,7 +56,7 @@ export function MainPostScreen() {
     } else if (evaluatedType === 'bad') {
       setBadEvaluatedCount(prev => prev + 1);
     }
-  }, [evaluatedType, setBadEvaluatedCount, myPost]);
+  }, [evaluatedType, setBadEvaluatedCount, post]);
 
   // const {data: comments, refetch} = useQuery({
   //   queryKey: ['postComments', id],
@@ -122,39 +122,42 @@ export function MainPostScreen() {
       <View style={styles.mainPostContainer}>
         <ScrollView style={styles.scrollViewContainer}>
           <View style={styles.imageContainer}>
-            {myPost && (
+            {post && (
               <View style={{height: 480, width}}>
                 <ImageCard
-                  title={myPost.title}
-                  imgs={myPost.imgs}
+                  title={post.title}
+                  imgs={post.imgs}
                   goPostScreen={() => {}}
                   postId={id}
                   hideLinearHeight={true}
                 />
               </View>
             )}
-            <View style={styles.evaluateButtonContainer}>
-              <EvaluateButton
-                type="hmm"
-                onPress={() => {
-                  onPressLottie('bad', id);
-                }}
-              />
-              <EvaluateButton
-                type="good"
-                onPress={() => {
-                  onPressLottie('good', id);
-                }}
-              />
-            </View>
+
+            {post && !post.isOwner && (
+              <View style={styles.evaluateButtonContainer}>
+                <EvaluateButton
+                  type="hmm"
+                  onPress={() => {
+                    onPressLottie('bad', id);
+                  }}
+                />
+                <EvaluateButton
+                  type="good"
+                  onPress={() => {
+                    onPressLottie('good', id);
+                  }}
+                />
+              </View>
+            )}
           </View>
           <View style={styles.bottomContainer}>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{myPost?.title}</Text>
+              <Text style={styles.title}>{post?.title}</Text>
             </View>
 
             <View style={styles.tagContainer}>
-              {myPost?.hashtags.map(tag => (
+              {post?.hashtags.map(tag => (
                 <View style={{marginRight: 8}} key={tag}>
                   <Tag text={tag} />
                 </View>
@@ -177,7 +180,7 @@ export function MainPostScreen() {
             </View>
 
             <View style={styles.contentContainer}>
-              <Text style={styles.contentText}>{myPost?.description}</Text>
+              <Text style={styles.contentText}>{post?.description}</Text>
             </View>
 
             <View style={styles.commentContainer}>

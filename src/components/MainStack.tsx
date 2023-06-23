@@ -2,7 +2,7 @@ import React, {useLayoutEffect} from 'react';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainScreen} from '../screens/MainScreen';
-import {MainPostScreen} from '../screens/MainPostScreen';
+import {PostScreen} from '../screens/PostScreen';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
@@ -34,7 +34,7 @@ export function MainStack() {
       />
       <Stack.Screen
         name="MainPost"
-        component={MainPostScreen}
+        component={PostScreen}
         options={{
           headerTitle: '',
           headerTintColor: '#fff',
