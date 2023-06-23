@@ -11,6 +11,7 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -157,148 +158,155 @@ export function UploadScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={{display: 'flex', flexDirection: 'row', marginBottom: 18}}>
-        <Pressable
-          onPress={async () => {
-            const {assets} = await launchImageLibrary({
-              mediaType: 'photo',
-              quality: 0.8,
-              maxWidth: 768,
-              selectionLimit: 5,
-            });
-            if (assets) {
-              setImages(assets);
-            }
-          }}>
-          <View
-            style={{
-              width: 96,
-              height: 96,
-              borderRadius: 8,
-              backgroundColor: '#282828',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={100}
+        behavior={'position'}
+        style={{flex: 1}}>
+        <View style={{display: 'flex', flexDirection: 'row', marginBottom: 18}}>
+          <Pressable
+            onPress={async () => {
+              const {assets} = await launchImageLibrary({
+                mediaType: 'photo',
+                quality: 0.8,
+                maxWidth: 768,
+                selectionLimit: 5,
+              });
+              if (assets) {
+                setImages(assets);
+              }
             }}>
-            <Text style={{color: '#fff'}}>업로드</Text>
-          </View>
-        </Pressable>
-        <FlatList
-          data={images}
-          keyExtractor={(item, index) => item?.uri || index.toString()}
-          renderItem={({item, index}) => (
-            <View style={{marginLeft: 8}}>
-              <Image
-                source={{
-                  uri: item.uri,
-                }}
-                style={{
-                  width: 96,
-                  height: 96,
-                  borderRadius: 8,
-                }}
-              />
-              <Pressable
-                onPress={() => {
-                  setImages(images.filter((_, i) => i !== index));
-                }}
-                style={{
-                  position: 'absolute',
-                  right: 5,
-                  top: 5,
-                  backgroundColor: '#000',
-                  width: 22,
-                  height: 22,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 8,
-                }}>
-                <CustomIcon name="iconClose" color={'#FFFFFF'} />
-              </Pressable>
+            <View
+              style={{
+                width: 96,
+                height: 96,
+                borderRadius: 8,
+                backgroundColor: '#282828',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{color: '#fff'}}>업로드</Text>
             </View>
-          )}
-          horizontal={true}
-        />
-      </View>
-
-      <View style={[styles.formLayout]}>
-        <Text style={styles.formTitle}>제목 *</Text>
-        <View style={styles.formInputArea}>
-          <TextInput
-            editable
-            multiline
-            numberOfLines={1}
-            maxLength={TITLE_MAX_LENGTH}
-            placeholder="제목을 입력해주세요."
-            placeholderTextColor="#8F8F8F"
-            style={styles.input}
-            onChange={e => {
-              setTitle(e.nativeEvent.text);
-            }}
-            value={title}
+          </Pressable>
+          <FlatList
+            data={images}
+            keyExtractor={(item, index) => item?.uri || index.toString()}
+            renderItem={({item, index}) => (
+              <View style={{marginLeft: 8}}>
+                <Image
+                  source={{
+                    uri: item.uri,
+                  }}
+                  style={{
+                    width: 96,
+                    height: 96,
+                    borderRadius: 8,
+                  }}
+                />
+                <Pressable
+                  onPress={() => {
+                    setImages(images.filter((_, i) => i !== index));
+                  }}
+                  style={{
+                    position: 'absolute',
+                    right: 5,
+                    top: 5,
+                    backgroundColor: '#000',
+                    width: 22,
+                    height: 22,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 8,
+                  }}>
+                  <CustomIcon name="iconClose" color={'#FFFFFF'} />
+                </Pressable>
+              </View>
+            )}
+            horizontal={true}
           />
-          <View style={styles.formTextCountContainer}>
-            <Text style={[styles.formTextCount, {color: '#FFFFFF'}]}>
-              {title.length}
-            </Text>
-            <Text style={styles.formTextCount}>/{TITLE_MAX_LENGTH}</Text>
+        </View>
+
+        <View style={[styles.formLayout]}>
+          <Text style={styles.formTitle}>제목 *</Text>
+          <View style={styles.formInputArea}>
+            <TextInput
+              editable
+              multiline
+              numberOfLines={1}
+              maxLength={TITLE_MAX_LENGTH}
+              placeholder="제목을 입력해주세요."
+              placeholderTextColor="#8F8F8F"
+              style={styles.input}
+              onChange={e => {
+                setTitle(e.nativeEvent.text);
+              }}
+              value={title}
+            />
+            <View style={styles.formTextCountContainer}>
+              <Text style={[styles.formTextCount, {color: '#FFFFFF'}]}>
+                {title.length}
+              </Text>
+              <Text style={styles.formTextCount}>/{TITLE_MAX_LENGTH}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={[styles.formLayout]}>
-        <Text style={styles.formTitle}>내용</Text>
-        <View style={styles.formInputArea}>
-          <TextInput
-            editable
-            multiline
-            numberOfLines={4}
-            maxLength={DESCRIPTion_MAX_LENGTH}
-            placeholder="예시) 주말에 제주도 여행가는데 1번과 2번 중에 어떤 스타일이 더 좋을까요?"
-            placeholderTextColor="#8F8F8F"
-            style={styles.input}
-            onChange={e => {
-              setDescription(e.nativeEvent.text);
-            }}
-            value={description}
-          />
-          <View style={styles.formTextCountContainer}>
-            <Text style={[styles.formTextCount, {color: '#FFFFFF'}]}>
-              {description.length}
-            </Text>
-            <Text style={styles.formTextCount}>/{DESCRIPTion_MAX_LENGTH}</Text>
+        <View style={[styles.formLayout]}>
+          <Text style={styles.formTitle}>내용</Text>
+          <View style={styles.formInputArea}>
+            <TextInput
+              editable
+              multiline
+              numberOfLines={4}
+              maxLength={DESCRIPTion_MAX_LENGTH}
+              placeholder="예시) 주말에 제주도 여행가는데 1번과 2번 중에 어떤 스타일이 더 좋을까요?"
+              placeholderTextColor="#8F8F8F"
+              style={styles.input}
+              onChange={e => {
+                setDescription(e.nativeEvent.text);
+              }}
+              value={description}
+            />
+            <View style={styles.formTextCountContainer}>
+              <Text style={[styles.formTextCount, {color: '#FFFFFF'}]}>
+                {description.length}
+              </Text>
+              <Text style={styles.formTextCount}>
+                /{DESCRIPTion_MAX_LENGTH}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={[styles.formLayout]}>
-        <Text style={styles.formTitle}>상황</Text>
-        <View style={styles.uploadTagContainer}>
-          {EVENTS.slice(0, 4).map((event, idx) => (
-            <View key={idx} style={styles.tagWrapper}>
-              <Tag
-                text={event}
-                handleClick={() => {
-                  toggleEvent(event);
-                }}
-              />
-            </View>
-          ))}
+        <View style={[styles.formLayout]}>
+          <Text style={styles.formTitle}>상황</Text>
+          <View style={styles.uploadTagContainer}>
+            {EVENTS.slice(0, 4).map((event, idx) => (
+              <View key={idx} style={styles.tagWrapper}>
+                <Tag
+                  text={event}
+                  handleClick={() => {
+                    toggleEvent(event);
+                  }}
+                />
+              </View>
+            ))}
+          </View>
+          <View style={{...styles.uploadTagContainer, marginTop: 8}}>
+            {EVENTS.slice(4).map((event, idx) => (
+              <View key={idx} style={styles.tagWrapper}>
+                <Tag
+                  text={event}
+                  handleClick={() => {
+                    toggleEvent(event);
+                  }}
+                />
+              </View>
+            ))}
+          </View>
         </View>
-        <View style={{...styles.uploadTagContainer, marginTop: 8}}>
-          {EVENTS.slice(4).map((event, idx) => (
-            <View key={idx} style={styles.tagWrapper}>
-              <Tag
-                text={event}
-                handleClick={() => {
-                  toggleEvent(event);
-                }}
-              />
-            </View>
-          ))}
-        </View>
-      </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 }
@@ -306,7 +314,6 @@ export function UploadScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#17171B',
-    flex: 1,
     padding: 16,
   },
   formLayout: {
