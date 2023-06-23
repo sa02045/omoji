@@ -17,6 +17,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import CustomIcon from '../components/CustomIcon';
 import {requestPostPosts} from '../api/post';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {Tag} from '../components/Tag';
 export interface Asset {
   base64?: string;
   uri?: string;
@@ -34,7 +35,7 @@ const TITLE_MAX_LENGTH = 38;
 const DESCRIPTion_MAX_LENGTH = 100;
 const {width} = Dimensions.get('window');
 
-const Events = ['결혼식', '여행', '휴가', '데이트', '학교', '출근', '데일리'];
+const EVENTS = ['결혼식', '여행', '휴가', '데이트', '학교', '출근', '데일리'];
 
 type StackParamList = {
   Main: undefined;
@@ -113,6 +114,15 @@ export function UploadScreen() {
       </Pressable>
     );
   }, [isValid, navigation, title, description, images, allEvents]);
+
+  const toggleEvent = (event: string) => {
+    setAllEvents(prev => {
+      if (prev.includes(event)) {
+        return prev.filter(_event => _event !== event);
+      }
+      return [...prev, event];
+    });
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -265,41 +275,28 @@ export function UploadScreen() {
       <View style={[styles.formLayout]}>
         <Text style={styles.formTitle}>상황</Text>
         <View style={styles.uploadTagContainer}>
-          {Events.map((event, idx) => {
-            return (
-              <View
-                key={idx}
-                style={{
-                  marginRight: 8,
-                  marginTop: 4,
-                }}>
-                <Pressable
-                  onPress={() => {
-                    if (allEvents.includes(event)) {
-                      setAllEvents(allEvents.filter(e => e !== event));
-                    } else {
-                      setAllEvents([...allEvents, event]);
-                    }
-                  }}>
-                  <View
-                    style={
-                      allEvents.includes(event)
-                        ? styles.uploadTagClicked
-                        : styles.uploadTag
-                    }>
-                    <Text
-                      style={
-                        allEvents.includes(event)
-                          ? styles.uploadTagClickedText
-                          : styles.uploadTagText
-                      }>
-                      {event}
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
-            );
-          })}
+          {EVENTS.slice(0, 4).map((event, idx) => (
+            <View key={idx} style={styles.tagWrapper}>
+              <Tag
+                text={event}
+                handleClick={() => {
+                  toggleEvent(event);
+                }}
+              />
+            </View>
+          ))}
+        </View>
+        <View style={{...styles.uploadTagContainer, marginTop: 8}}>
+          {EVENTS.slice(4).map((event, idx) => (
+            <View key={idx} style={styles.tagWrapper}>
+              <Tag
+                text={event}
+                handleClick={() => {
+                  toggleEvent(event);
+                }}
+              />
+            </View>
+          ))}
         </View>
       </View>
     </ScrollView>
@@ -346,48 +343,12 @@ const styles = StyleSheet.create({
     width: width - 16,
     flexWrap: 'wrap',
   },
-
-  uploadTag: {
-    height: 36,
-    display: 'flex',
-    alignSelf: 'flex-start',
-    justifyDescription: 'center',
-    paddingTop: 6,
-    paddingBottom: 6,
-    paddingLeft: 12,
-    paddingRight: 12,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#555555',
-    borderRadius: 8,
-  },
-  uploadTagClicked: {
-    height: 36,
-    display: 'flex',
-    alignSelf: 'flex-start',
-    justifyDescription: 'center',
-    paddingTop: 6,
-    paddingBottom: 6,
-    paddingLeft: 12,
-    paddingRight: 12,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#C0C0C0',
-    borderRadius: 8,
-    backgroundColor: '#C0C0C0',
-  },
-  uploadTagText: {
-    color: '#fff',
-    fontWeight: '700',
-  },
-  uploadTagClickedText: {
-    color: '#17171B',
-    fontWeight: '700',
-  },
-
   openText: {
     fontWeight: 'bold',
     fontSize: 18,
     color: '#fff',
+  },
+  tagWrapper: {
+    marginRight: 8,
   },
 });
