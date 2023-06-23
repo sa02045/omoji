@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Tag} from '../components/Tag';
@@ -114,98 +115,103 @@ export function MainPostScreen() {
   }
 
   return (
-    <View style={styles.mainPostContainer}>
-      <ScrollView style={styles.scrollViewContainer}>
-        <View style={styles.imageContainer}>
-          {myPost && (
-            <View style={{height: 480, width}}>
-              <ImageCard
-                title={myPost.title}
-                imgs={myPost.imgs}
-                goPostScreen={() => {}}
-                postId={id}
-                hideLinearHeight={true}
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior="height"
+      keyboardVerticalOffset={100}>
+      <View style={styles.mainPostContainer}>
+        <ScrollView style={styles.scrollViewContainer}>
+          <View style={styles.imageContainer}>
+            {myPost && (
+              <View style={{height: 480, width}}>
+                <ImageCard
+                  title={myPost.title}
+                  imgs={myPost.imgs}
+                  goPostScreen={() => {}}
+                  postId={id}
+                  hideLinearHeight={true}
+                />
+              </View>
+            )}
+            <View style={styles.evaluateButtonContainer}>
+              <EvaluateButton
+                type="hmm"
+                onPress={() => {
+                  onPressLottie('bad', id);
+                }}
+              />
+              <EvaluateButton
+                type="good"
+                onPress={() => {
+                  onPressLottie('good', id);
+                }}
               />
             </View>
-          )}
-          <View style={styles.evaluateButtonContainer}>
-            <EvaluateButton
-              type="hmm"
-              onPress={() => {
-                onPressLottie('bad', id);
-              }}
-            />
-            <EvaluateButton
-              type="good"
-              onPress={() => {
-                onPressLottie('good', id);
-              }}
-            />
           </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{myPost?.title}</Text>
-          </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{myPost?.title}</Text>
+            </View>
 
-          <View style={styles.tagContainer}>
-            {myPost?.hashtags.map(tag => (
-              <View style={{marginRight: 8}} key={tag}>
-                <Tag text={tag} />
+            <View style={styles.tagContainer}>
+              {myPost?.hashtags.map(tag => (
+                <View style={{marginRight: 8}} key={tag}>
+                  <Tag text={tag} />
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.goodOrBadContainer}>
+              <View style={{...styles.goodOrBadButton, marginRight: 10}}>
+                <Image source={GoodImage} style={styles.goodOrBadImage} />
+                <Text style={styles.goodOrBadButtonText}>
+                  {goodEvaluatedCount}
+                </Text>
               </View>
-            ))}
-          </View>
-
-          <View style={styles.goodOrBadContainer}>
-            <View style={{...styles.goodOrBadButton, marginRight: 10}}>
-              <Image source={GoodImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>
-                {goodEvaluatedCount}
-              </Text>
-            </View>
-            <View style={styles.goodOrBadButton}>
-              <Image source={BadImage} style={styles.goodOrBadImage} />
-              <Text style={styles.goodOrBadButtonText}>
-                {badEvaluatedCount}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.contentContainer}>
-            <Text style={styles.contentText}>{myPost?.description}</Text>
-          </View>
-
-          <View style={styles.commentContainer}>
-            <View style={styles.commentTopContainer}>
-              <Text style={styles.CommentTitle}>댓글</Text>
+              <View style={styles.goodOrBadButton}>
+                <Image source={BadImage} style={styles.goodOrBadImage} />
+                <Text style={styles.goodOrBadButtonText}>
+                  {badEvaluatedCount}
+                </Text>
+              </View>
             </View>
 
-            <View style={styles.commentBottomContainer}>
-              <View style={styles.commentBottomCommentContainer}>
-                <Text style={styles.nickname} />
-                <Text style={styles.comment}>comment</Text>
+            <View style={styles.contentContainer}>
+              <Text style={styles.contentText}>{myPost?.description}</Text>
+            </View>
+
+            <View style={styles.commentContainer}>
+              <View style={styles.commentTopContainer}>
+                <Text style={styles.CommentTitle}>댓글</Text>
+              </View>
+
+              <View style={styles.commentBottomContainer}>
+                <View style={styles.commentBottomCommentContainer}>
+                  <Text style={styles.nickname} />
+                  <Text style={styles.comment}>comment</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
 
-      <View style={styles.myCommentContainer}>
-        <View>
-          <TextInput
-            placeholder="댓글 쓰기..."
-            placeholderTextColor={'#fff'}
-            style={styles.myCommentInput}
-            value={commentText}
-            onChangeText={text => setCommentText(text)}
-          />
+        <View style={styles.myCommentContainer}>
+          <View>
+            <TextInput
+              placeholder="댓글 쓰기..."
+              placeholderTextColor={'#fff'}
+              style={styles.myCommentInput}
+              value={commentText}
+              onChangeText={text => setCommentText(text)}
+            />
+          </View>
+          <Pressable onPress={onPressPostComment}>
+            <Text style={styles.myCommentText}>게시</Text>
+          </Pressable>
         </View>
-        <Pressable onPress={onPressPostComment}>
-          <Text style={styles.myCommentText}>게시</Text>
-        </Pressable>
+        {lottieType && <Lottie type={lottieType} />}
       </View>
-      {lottieType && <Lottie type={lottieType} />}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
