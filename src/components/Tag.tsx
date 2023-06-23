@@ -1,27 +1,48 @@
-import * as React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 
-export function Tag({text}: {text: string}) {
+export function Tag({
+  text,
+  handleClick,
+}: {
+  text: string;
+  handleClick: () => void;
+}) {
+  const [selected, setSelectedTag] = useState<boolean>(false);
+
   return (
-    <View style={styles.tagContainer}>
-      <Text style={styles.tag}>{text}</Text>
-    </View>
+    <Pressable
+      onPress={() => {
+        setSelectedTag(!selected);
+        handleClick();
+      }}>
+      <View style={styles(selected).tagContainer}>
+        <Text style={styles(selected).tagText}>{text}</Text>
+      </View>
+    </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  tagContainer: {
-    backgroundColor: '#C0C0C0',
-    display: 'flex',
-    justifyContent: 'center',
-    alignContent: 'center',
-    borderRadius: 8,
-    padding: 3,
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  tag: {
-    color: '#17171B',
-    fontSize: 12,
-  },
-});
+const styles = (selected: boolean) =>
+  StyleSheet.create({
+    tagContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingTop: 6,
+      paddingBottom: 6,
+      paddingLeft: 12,
+      paddingRight: 12,
+      borderWidth: 1,
+      height: 36,
+      borderStyle: 'solid',
+      borderColor: selected ? '#C0C0C0' : '#555555',
+      borderRadius: 8,
+      backgroundColor: selected ? '#C0C0C0' : '#17171B',
+    },
+    tagText: {
+      color: selected ? '#17171B' : '#fff',
+      fontWeight: '700',
+      fontSize: 14,
+    },
+  });
