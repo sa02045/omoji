@@ -12,6 +12,7 @@ import Config from 'react-native-config';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {requestPostAppleLogin, requestGetNaverLogin} from '../api/auth';
 import NaverLogin from '@react-native-seoul/naver-login';
+import {GradientText} from '../components/GradientText';
 
 type StackParamList = {
   Login: undefined;
@@ -120,7 +121,11 @@ export function LoginScreen() {
       </Pressable>
       <View>
         <Text style={styles.text}>오늘 모입지?</Text>
-        <Text style={styles.text}>오모지 입니다.</Text>
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <GradientText style={styles.text}>오모지</GradientText>
+          <Text style={styles.text}>입니다</Text>
+        </View>
+
         <Image
           style={styles.image}
           source={require('../assets/loginImage.png')}
@@ -210,6 +215,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#FFFFFF',
     fontSize: 24,
+    fontWeight: 'bold',
   },
   image: {
     width: 260,
