@@ -6,7 +6,7 @@ export function Tag({
   handleClick,
 }: {
   text: string;
-  handleClick: () => void;
+  handleClick?: () => void;
 }) {
   const [selected, setSelectedTag] = useState<boolean>(false);
 
@@ -14,7 +14,7 @@ export function Tag({
     <Pressable
       onPress={() => {
         setSelectedTag(!selected);
-        handleClick();
+        handleClick && handleClick();
       }}>
       <View style={styles(selected).tagContainer}>
         <Text style={styles(selected).tagText}>{text}</Text>
