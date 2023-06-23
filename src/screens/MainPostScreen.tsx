@@ -8,7 +8,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Tag} from '../components/Tag';
 import BadImage from '../assets/hmm.png';
 import GoodImage from '../assets/good.png';
@@ -29,6 +29,13 @@ export function MainPostScreen() {
   const {id} = route.params as Params;
   const [commentText, setCommentText] = useState('');
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
+  const [evaluatedType, setEvaluatedType] = useState<'good' | 'bad' | null>(
+    null,
+  );
+
+  const [goodEvaluatedCount, setGoodEvaluatedCount] = useState(0);
+  const [badEvaluatedCount, setBadEvaluatedCount] = useState(0);
+
   const {data: myPost, isLoading} = useQuery({
     queryKey: ['myPost', id],
     queryFn: async () => {
@@ -36,6 +43,19 @@ export function MainPostScreen() {
       return post;
     },
   });
+
+  useEffect(() => {
+    if (myPost) {
+      setGoodEvaluatedCount(myPost.dislikeCount);
+      setBadEvaluatedCount(myPost.likeCount);
+    }
+
+    if (evaluatedType === 'good') {
+      setGoodEvaluatedCount(prev => prev + 1);
+    } else if (evaluatedType === 'bad') {
+      setBadEvaluatedCount(prev => prev + 1);
+    }
+  }, [evaluatedType, setBadEvaluatedCount, myPost]);
 
   // const {data: comments, refetch} = useQuery({
   //   queryKey: ['postComments', id],
@@ -61,7 +81,11 @@ export function MainPostScreen() {
 
   const onPressLottie = useCallback(
     async (type: 'good' | 'bad', postId: number) => {
+      if (evaluatedType) {
+        return;
+      }
       setLottieType(type);
+      setEvaluatedType(type);
       setTimeout(() => {
         setLottieType(null);
       }, 1000);
@@ -71,7 +95,7 @@ export function MainPostScreen() {
         await postEvaluate('DISLIKE', postId);
       }
     },
-    [setLottieType],
+    [setLottieType, evaluatedType],
   );
 
   if (isLoading) {
@@ -136,13 +160,13 @@ export function MainPostScreen() {
             <View style={{...styles.goodOrBadButton, marginRight: 10}}>
               <Image source={GoodImage} style={styles.goodOrBadImage} />
               <Text style={styles.goodOrBadButtonText}>
-                {myPost?.likeCount}
+                {goodEvaluatedCount}
               </Text>
             </View>
             <View style={styles.goodOrBadButton}>
               <Image source={BadImage} style={styles.goodOrBadImage} />
               <Text style={styles.goodOrBadButtonText}>
-                {myPost?.dislikeCount}
+                {badEvaluatedCount}
               </Text>
             </View>
           </View>
