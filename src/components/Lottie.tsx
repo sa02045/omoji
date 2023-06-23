@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   lottie: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
   },
 });
