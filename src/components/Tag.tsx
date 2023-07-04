@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 
-export function Tag({
-  text,
-  handleClick,
-}: {
+interface Props {
   text: string;
   handleClick?: () => void;
-}) {
+}
+
+export function Tag({text, handleClick}: Props) {
   const [selected, setSelectedTag] = useState<boolean>(false);
 
   return (

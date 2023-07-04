@@ -13,15 +13,13 @@ import HmmIcon from '../assets/mypage-hmm.png';
 
 const {width} = Dimensions.get('window');
 
-export const MyPageImageCard = ({
-  image,
-  likeCount,
-  dislikeCount,
-}: {
+interface Props {
   image: string;
   likeCount: number;
   dislikeCount: number;
-}) => {
+}
+
+export const MyPageImageCard = ({image, likeCount, dislikeCount}: Props) => {
   return (
     <View style={styles.container}>
       <ImageBackground style={styles.imageBackground} source={{uri: image}}>

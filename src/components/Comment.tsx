@@ -4,13 +4,12 @@ import CommentIcon from '@assets/comment.png';
 
 const {width} = Dimensions.get('window');
 
-export function Comment({
-  nickname,
-  comment,
-}: {
+interface Props {
   nickname: string;
   comment: string;
-}) {
+}
+
+export function Comment({nickname, comment}: Props) {
   return (
     <View style={styles.commentContainer}>
       <Text style={styles.nickname}>{nickname}</Text>

@@ -4,13 +4,12 @@ import {Image, StyleSheet, View} from 'react-native';
 import GoodImage from '../assets/good.png';
 import HmmImage from '../assets/hmm.png';
 
-export function EvaluateButton({
-  type,
-  onPress,
-}: {
+interface Props {
   type: 'good' | 'hmm';
   onPress: () => void;
-}) {
+}
+
+export function EvaluateButton({type, onPress}: Props) {
   const image = type === 'good' ? GoodImage : HmmImage;
 
   return (

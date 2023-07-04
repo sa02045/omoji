@@ -4,7 +4,11 @@ import {StyleSheet} from 'react-native';
 
 import LottieView from 'lottie-react-native';
 
-export function Lottie({type}: {type: 'good' | 'bad'}) {
+interface Props {
+  type: 'good' | 'bad';
+}
+
+export function Lottie({type}: Props) {
   return (
     <View style={styles.lottieContainer}>
       {type === 'good' ? (
