@@ -10,7 +10,6 @@ import {
   Alert,
   ScrollView,
   Image,
-  ActivityIndicator,
   KeyboardAvoidingView,
 } from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
@@ -19,6 +18,7 @@ import CustomIcon from '../components/CustomIcon';
 import {requestPostPosts} from '../api/post';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {Tag} from '../components/Tag';
+import {LoadingIndicator} from '../components/LoadingIndicator';
 export interface Asset {
   base64?: string;
   uri?: string;
@@ -142,18 +142,7 @@ export function UploadScreen() {
   }, [HeaderRight, HeaderLeft, navigation]);
 
   if (isLoading) {
-    return (
-      <View
-        style={{
-          backgroundColor: '#17171B',
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   return (

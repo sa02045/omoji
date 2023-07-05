@@ -6,7 +6,6 @@ import {
   TextInput,
   Pressable,
   Image,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
@@ -24,6 +23,7 @@ import {postEvaluate} from '../api/evaluate';
 import ThreeDotImg from '../assets/three-dot.png';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useFetchPostById} from '../hook/services/queries/useFetchPostById';
+import {LoadingIndicator} from '../components/LoadingIndicator';
 type Params = {
   id: number;
 };
@@ -120,18 +120,7 @@ export function PostScreen() {
   );
 
   if (isLoading || !post) {
-    return (
-      <View
-        style={{
-          backgroundColor: '#17171B',
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   return (

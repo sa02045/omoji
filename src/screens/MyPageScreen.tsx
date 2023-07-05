@@ -1,13 +1,15 @@
 import {Text, TouchableOpacity, View, Image, Pressable} from 'react-native';
 import React from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {StyleSheet, ActivityIndicator} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlatList} from 'react-native-gesture-handler';
 import {MyPageImageCard} from '../components/MyPageImageCard';
 import {useRecoilState} from 'recoil';
 import {nicknameSelector} from '../atoms/NickNameAtom';
 import {useFetchMyPosts} from '../hook/services/queries/useFetchMyPosts';
+import {LoadingIndicator} from '../components/LoadingIndicator';
+
 type StackParamList = {
   MyPost: {id: number};
   Setting: undefined;
@@ -18,25 +20,14 @@ export function MyPageScreen() {
   const navigator = useNavigation<StackNavigationProp<StackParamList>>();
   const [nickname] = useRecoilState(nicknameSelector);
 
-  const {data: myPosts, isLoading, error, refetch} = useFetchMyPosts();
+  const {data: myPosts, error, refetch, isLoading} = useFetchMyPosts();
 
   useFocusEffect(() => {
     refetch();
   });
 
   if (isLoading) {
-    return (
-      <View
-        style={{
-          backgroundColor: '#17171B',
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   if (error) {

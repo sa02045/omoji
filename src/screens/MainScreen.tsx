@@ -1,11 +1,6 @@
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import {Dimensions, StyleSheet, View, Text} from 'react-native';
 import Swiper from 'react-native-deck-swiper';
+import {LoadingIndicator} from '../components/LoadingIndicator';
 
 import {EvaluateButton} from '../components/EvaluateButton';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -76,18 +71,7 @@ export function MainScreen() {
   }, [cards]);
 
   if (isLoading) {
-    return (
-      <View
-        style={{
-          backgroundColor: '#17171B',
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   return (
