@@ -7,7 +7,7 @@ const STORAGE_KEY = {
 } as const;
 
 export function useStorage() {
-  async function setStorage(key: string, value: unknown) {
+  async function setStorage(key: string, value: string) {
     await storage.setItem(key, value);
   }
 
