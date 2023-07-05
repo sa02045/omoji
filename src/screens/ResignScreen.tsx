@@ -3,12 +3,13 @@ import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import ResignIcon from '../assets/resign.png';
 import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
-import {requestPostResign} from '../api/auth';
+import {useResign} from '../hook/services/mutations/useResign';
 import storage from '../utils/Storage';
 import STORAGE_KEY from '../constants/StorageKey';
 
 export function ResignScreen() {
   const [_, setLogin] = useRecoilState(loginAtom);
+  const {mutateAsync: mutateResign} = useResign();
   return (
     <View style={styles.container}>
       <View>
@@ -43,7 +44,7 @@ export function ResignScreen() {
           }}
           onPress={async () => {
             try {
-              await requestPostResign();
+              await mutateResign();
               setLogin(false);
               storage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
               storage.removeItem(STORAGE_KEY.REFRESH_TOKEN_KEY);

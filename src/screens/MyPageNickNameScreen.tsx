@@ -8,18 +8,18 @@ import {
   View,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {requestPatchProfile} from '../api/auth';
-
 import StorageKey from '../constants/StorageKey';
 import storage from '../utils/Storage';
 import CustomIcon from '../components/CustomIcon';
 import {useRecoilState} from 'recoil';
 import {nicknameSelector} from '../atoms/NickNameAtom';
+import {useProfile} from '../hook/services/mutations/useProfile';
 
 export function MyPageNickNameScreen() {
   const navigation = useNavigation();
   const [inputValue, setInputValue] = useState('');
   const [nickname, setNickname] = useRecoilState(nicknameSelector);
+  const {mutateAsync: mutateProfile} = useProfile();
 
   const HeaderLeft = useCallback(() => {
     return (
@@ -38,7 +38,7 @@ export function MyPageNickNameScreen() {
         if (nickname.length < 3) {
           Alert.alert('닉네임은 두글자 이상으로 해주세요!');
         }
-        await requestPatchProfile(nickname);
+        await mutateProfile(nickname);
         await storage.setItem(StorageKey.NICKNAME_KEY, nickname);
         navigation.goBack();
         setNickname(inputValue);
@@ -53,7 +53,14 @@ export function MyPageNickNameScreen() {
         <Text style={{color: nickname ? '#AF68FF' : '#fff'}}>완료</Text>
       </Pressable>
     );
-  }, [nickname, navigation, setNickname, setInputValue, inputValue]);
+  }, [
+    nickname,
+    navigation,
+    setNickname,
+    setInputValue,
+    inputValue,
+    mutateProfile,
+  ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
