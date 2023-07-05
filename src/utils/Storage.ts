@@ -7,11 +7,15 @@ class Storage {
   }
 
   async getItem(key: string) {
-    return await this.storage.getItem(key);
+    return this.storage.getItem(key);
   }
 
   async setItem(key: string, value: unknown) {
-    return await this.storage.setItem(key, JSON.stringify(value));
+    return this.storage.setItem(key, JSON.stringify(value));
+  }
+
+  async removeItem(key: string) {
+    return this.storage.removeItem(key);
   }
 }
 

@@ -11,7 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import {requestPatchProfile} from '../api/auth';
 
 import StorageKey from '../constants/StorageKey';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import storage from '../utils/Storage';
 import CustomIcon from '../components/CustomIcon';
 import {useRecoilState} from 'recoil';
 import {nicknameSelector} from '../atoms/NickNameAtom';
@@ -39,7 +39,7 @@ export function MyPageNickNameScreen() {
           Alert.alert('닉네임은 두글자 이상으로 해주세요!');
         }
         await requestPatchProfile(nickname);
-        await EncryptedStorage.setItem(StorageKey.NICKNAME_KEY, nickname);
+        await storage.setItem(StorageKey.NICKNAME_KEY, nickname);
         navigation.goBack();
         setNickname(inputValue);
         setInputValue('');

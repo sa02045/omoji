@@ -2,9 +2,8 @@ import React from 'react';
 import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import STORAGE_KEY from '../constants/StorageKey';
-
+import storage from '../utils/Storage';
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
 import Config from 'react-native-config';
@@ -49,19 +48,13 @@ export function LoginScreen() {
         const {accessToken, refreshToken, isNewUser, nickname} =
           await requestPostAppleLogin(identityToken);
 
-        await EncryptedStorage.setItem(
-          STORAGE_KEY.ACCESS_TOKEN_KEY,
-          accessToken,
-        );
-        await EncryptedStorage.setItem(
-          STORAGE_KEY.REFRESH_TOKEN_KEY,
-          refreshToken,
-        );
+        await storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
+        await storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
 
         if (isNewUser) {
           navigate('NickName');
         } else {
-          await EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
+          await storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
           setLogin(true);
         }
       } catch (e) {
@@ -87,19 +80,13 @@ export function LoginScreen() {
         const {nickname, isNewUser, accessToken, refreshToken} =
           await requestGetNaverLogin(successResponse.accessToken);
 
-        await EncryptedStorage.setItem(
-          STORAGE_KEY.ACCESS_TOKEN_KEY,
-          accessToken,
-        );
-        await EncryptedStorage.setItem(
-          STORAGE_KEY.REFRESH_TOKEN_KEY,
-          refreshToken,
-        );
+        await storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
+        await storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
 
         if (isNewUser) {
           navigate('NickName');
         } else {
-          await EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
+          await storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
           setLogin(true);
         }
       } catch (e) {

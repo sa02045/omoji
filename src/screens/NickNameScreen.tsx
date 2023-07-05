@@ -11,7 +11,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {requestPatchProfile} from '../api/auth';
 
-import EncryptedStorage from 'react-native-encrypted-storage';
+import storage from '../utils/Storage';
 import STORAGE_KEY from '../constants/StorageKey';
 
 type StackParamList = {
@@ -30,7 +30,7 @@ export function NickNameScreen() {
         Alert.alert('닉네임은 두글자 이상으로 해주세요!');
       }
       await requestPatchProfile(nickname);
-      await EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
+      await storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
       navigate('Preview');
     } catch (e) {
       Alert.alert('닉네임 설정 실패', JSON.stringify(e));

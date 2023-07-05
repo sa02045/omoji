@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import storage from '../utils/Storage';
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
 import {useNavigation} from '@react-navigation/native';
@@ -30,10 +30,8 @@ export function SettingScreen() {
                   {
                     text: '로그아웃',
                     onPress: () => {
-                      EncryptedStorage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
-                      EncryptedStorage.removeItem(
-                        STORAGE_KEY.REFRESH_TOKEN_KEY,
-                      );
+                      storage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
+                      storage.removeItem(STORAGE_KEY.REFRESH_TOKEN_KEY);
                       setLogin(false);
                     },
                   },

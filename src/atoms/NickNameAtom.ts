@@ -1,5 +1,5 @@
 import {RecoilState, atom, selector} from 'recoil';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import storage from '../utils/Storage';
 import STORAGE_KEY from '../constants/StorageKey';
 
 export const nicknameAtom: RecoilState<string> = atom({
@@ -14,9 +14,7 @@ export const nicknameSelector = selector({
     if (nickname.length) {
       return nickname;
     } else {
-      const encryptedNickname = await EncryptedStorage.getItem(
-        STORAGE_KEY.NICKNAME_KEY,
-      );
+      const encryptedNickname = await storage.getItem(STORAGE_KEY.NICKNAME_KEY);
       if (encryptedNickname) {
         return encryptedNickname;
       } else {
@@ -28,7 +26,7 @@ export const nicknameSelector = selector({
     const {set} = opts;
     set(nicknameAtom, newValue);
     if (typeof newValue === 'string') {
-      EncryptedStorage.setItem(STORAGE_KEY.NICKNAME_KEY, newValue);
+      storage.setItem(STORAGE_KEY.NICKNAME_KEY, newValue);
     }
   },
 });

@@ -4,7 +4,7 @@ import ResignIcon from '../assets/resign.png';
 import {loginAtom} from '../atoms/LoginAtom';
 import {useRecoilState} from 'recoil';
 import {requestPostResign} from '../api/auth';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import storage from '../utils/Storage';
 import STORAGE_KEY from '../constants/StorageKey';
 
 export function ResignScreen() {
@@ -45,8 +45,8 @@ export function ResignScreen() {
             try {
               await requestPostResign();
               setLogin(false);
-              EncryptedStorage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
-              EncryptedStorage.removeItem(STORAGE_KEY.REFRESH_TOKEN_KEY);
+              storage.removeItem(STORAGE_KEY.ACCESS_TOKEN_KEY);
+              storage.removeItem(STORAGE_KEY.REFRESH_TOKEN_KEY);
             } catch (e) {
               Alert.alert('에러가 발생했습니다.', JSON.stringify(e));
             }
