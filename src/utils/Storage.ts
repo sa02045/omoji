@@ -10,12 +10,12 @@ class Storage {
     return this.storage.getItem(key);
   }
 
-  async setItem(key: string, value: unknown) {
-    return this.storage.setItem(key, JSON.stringify(value));
+  async setItem(key: string, value: string) {
+    return this.storage.setItem(key, value);
   }
 
   async removeItem(key: string) {
-    return this.storage.removeItem(key);
+    this.storage.removeItem(key);
   }
 }
 

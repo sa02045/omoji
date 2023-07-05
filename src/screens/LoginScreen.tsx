@@ -3,15 +3,14 @@ import {Alert, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import STORAGE_KEY from '../constants/StorageKey';
-import storage from '../utils/Storage';
 import {useRecoilState} from 'recoil';
 import {loginAtom} from '../atoms/LoginAtom';
 import Config from 'react-native-config';
-
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {requestPostAppleLogin, requestGetNaverLogin} from '../api/auth';
 import NaverLogin from '@react-native-seoul/naver-login';
 import {GradientText} from '../components/GradientText';
+import storage from '../utils/Storage';
 
 type StackParamList = {
   Login: undefined;
@@ -48,13 +47,13 @@ export function LoginScreen() {
         const {accessToken, refreshToken, isNewUser, nickname} =
           await requestPostAppleLogin(identityToken);
 
-        await storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
-        await storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
+        storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
+        storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
 
         if (isNewUser) {
           navigate('NickName');
         } else {
-          await storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
+          storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
           setLogin(true);
         }
       } catch (e) {
@@ -80,13 +79,13 @@ export function LoginScreen() {
         const {nickname, isNewUser, accessToken, refreshToken} =
           await requestGetNaverLogin(successResponse.accessToken);
 
-        await storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
-        await storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
+        storage.setItem(STORAGE_KEY.ACCESS_TOKEN_KEY, accessToken);
+        storage.setItem(STORAGE_KEY.REFRESH_TOKEN_KEY, refreshToken);
 
         if (isNewUser) {
           navigate('NickName');
         } else {
-          await storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
+          storage.setItem(STORAGE_KEY.NICKNAME_KEY, nickname);
           setLogin(true);
         }
       } catch (e) {
