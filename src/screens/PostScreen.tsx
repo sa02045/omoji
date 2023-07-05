@@ -16,19 +16,14 @@ import BadImage from '../assets/hmm.png';
 import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useQuery} from '@tanstack/react-query';
-import {
-  fetchPostById,
-  requestDeletePostById,
-  postCommentById,
-} from '../api/post';
+import {requestDeletePostById, postCommentById} from '../api/post';
 import {EvaluateButton} from '../components/EvaluateButton';
 import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
 import {postEvaluate} from '../api/evaluate';
 import ThreeDotImg from '../assets/three-dot.png';
 import {StackNavigationProp} from '@react-navigation/stack';
-
+import {useFetchPostById} from '../hook/services/queries/useFetchPostById';
 type Params = {
   id: number;
 };
@@ -51,13 +46,7 @@ export function PostScreen() {
   const [goodEvaluatedCount, setGoodEvaluatedCount] = useState(0);
   const [badEvaluatedCount, setBadEvaluatedCount] = useState(0);
 
-  const {data: post, isLoading} = useQuery({
-    queryKey: ['post', id],
-    queryFn: async () => {
-      const data = await fetchPostById(id);
-      return data;
-    },
-  });
+  const {data: post, isLoading} = useFetchPostById(id);
 
   const alertDelete = useCallback(() => {
     Alert.alert('게시글을 삭제하시겠습니까?', '', [

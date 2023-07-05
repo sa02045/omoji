@@ -5,11 +5,9 @@ import {StyleSheet, ActivityIndicator} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlatList} from 'react-native-gesture-handler';
 import {MyPageImageCard} from '../components/MyPageImageCard';
-import {fetchMyPosts} from '../api/post';
-import {useQuery} from '@tanstack/react-query';
 import {useRecoilState} from 'recoil';
 import {nicknameSelector} from '../atoms/NickNameAtom';
-
+import {useFetchMyPosts} from '../hook/services/queries/useFetchMyPosts';
 type StackParamList = {
   MyPost: {id: number};
   Setting: undefined;
@@ -20,19 +18,7 @@ export function MyPageScreen() {
   const navigator = useNavigation<StackNavigationProp<StackParamList>>();
   const [nickname] = useRecoilState(nicknameSelector);
 
-  const {
-    data: myPosts,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['myPosts'],
-    queryFn: async () => {
-      const posts = await fetchMyPosts();
-      return posts;
-    },
-    refetchOnWindowFocus: true,
-  });
+  const {data: myPosts, isLoading, error, refetch} = useFetchMyPosts();
 
   useFocusEffect(() => {
     refetch();
