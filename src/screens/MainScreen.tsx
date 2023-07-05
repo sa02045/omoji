@@ -6,11 +6,12 @@ import {EvaluateButton} from '../components/EvaluateButton';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import React from 'react';
 import {Lottie} from '../components/Lottie';
-import {fetchEvaluate} from '../api/evaluate';
 import type {Evaluate} from '../api/evaluate';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {MySwiper} from '../components/MySwiper';
+import {useEvaluate} from '../hook/services/mutations/useEvaluate';
+
 export interface Product {
   id: number;
   title: string;
@@ -38,7 +39,6 @@ export function MainScreen() {
   const [lottieType, setLottieType] = useState<'good' | 'bad' | null>(null);
   const {navigate} = useNavigation<StackNavigationProp<MainStackList>>();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [cards, setCards] = useState<Evaluate[]>([]);
   const [deletedCards, setDeleteCards] = useState<Evaluate[]>([]);
   const swiperRef = useRef<Swiper<Evaluate>>(null);
@@ -53,22 +53,23 @@ export function MainScreen() {
     [setLottieType],
   );
 
+  const {
+    refetch: refetchEvaluates,
+    data: evaluatesData,
+    isLoading,
+  } = useEvaluate();
+
+  useEffect(() => {
+    if (evaluatesData) {
+      setCards(evaluatesData);
+    }
+  }, [evaluatesData]);
+
   useEffect(() => {
     if (cards.length === 0) {
-      try {
-        setIsLoading(true);
-        fetchEvaluatePosts();
-      } catch (e) {
-      } finally {
-        setIsLoading(false);
-      }
+      refetchEvaluates();
     }
-
-    async function fetchEvaluatePosts() {
-      const posts = await fetchEvaluate();
-      setCards(posts);
-    }
-  }, [cards]);
+  }, [cards, refetchEvaluates]);
 
   if (isLoading) {
     return <LoadingIndicator />;
