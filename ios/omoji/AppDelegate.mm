@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-
+#import <NaverThirdPartyLogin/NaverThirdPartyLoginConnection.h>
 #import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
@@ -31,6 +31,12 @@
 - (BOOL)concurrentRootEnabled
 {
   return true;
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+   return [[NaverThirdPartyLoginConnection getSharedInstance] application:app openURL:url options:options];
 }
 
 @end

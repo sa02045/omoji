@@ -542,17 +542,17 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = omoji/omoji.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2023071103;
 				DEVELOPMENT_TEAM = PL5N4HM26L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = omoji/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "오모지";
+				INFOPLIST_KEY_CFBundleDisplayName = omoji;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.8;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -578,16 +578,16 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = omoji/omoji.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2023071103;
 				DEVELOPMENT_TEAM = PL5N4HM26L;
 				INFOPLIST_FILE = omoji/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "오모지";
+				INFOPLIST_KEY_CFBundleDisplayName = omoji;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.8;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
