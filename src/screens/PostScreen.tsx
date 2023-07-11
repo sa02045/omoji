@@ -15,7 +15,7 @@ import BadImage from '../assets/hmm.png';
 import GoodImage from '../assets/good.png';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {requestDeletePostById, postCommentById} from '../api/post';
+import {requestDeletePostById} from '../api/post';
 import {EvaluateButton} from '../components/EvaluateButton';
 import {ImageCard} from '../components/ImageCard';
 import {Lottie} from '../components/Lottie';
@@ -24,6 +24,9 @@ import ThreeDotImg from '../assets/three-dot.png';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useFetchPostById} from '../hook/services/queries/useFetchPostById';
 import {LoadingIndicator} from '../components/LoadingIndicator';
+import {postComment} from '../api/comment';
+import {useFetchComments} from '../hook/services/queries/useFetchComments';
+
 type Params = {
   id: number;
 };
@@ -47,6 +50,7 @@ export function PostScreen() {
   const [badEvaluatedCount, setBadEvaluatedCount] = useState(0);
 
   const {data: post, isLoading} = useFetchPostById(id);
+  const {data: comments, isError} = useFetchComments(id);
 
   const alertDelete = useCallback(() => {
     Alert.alert('게시글을 삭제하시겠습니까?', '', [
@@ -78,27 +82,10 @@ export function PostScreen() {
     }
   }, [evaluatedType, setBadEvaluatedCount, post]);
 
-  // const {data: comments, refetch} = useQuery({
-  //   queryKey: ['postComments', id],
-  //   queryFn: async () => {
-  //     const {data} = await requestGetComments(id);
-  //     return data;
-  //   },
-  // });
-
   const onPressPostComment = async () => {
-    await postCommentById(id, commentText);
+    await postComment(id, commentText);
     setCommentText('');
   };
-
-  // const onPressPostComment = async () => {
-  //   try {
-  //     await postCommentById(id, commentText);
-  //     setCommentText('');
-  //   } catch (e) {
-  //   } finally {
-  //   }
-  // };
 
   const onPressLottie = useCallback(
     async (type: 'good' | 'bad', postId: number) => {
@@ -199,10 +186,17 @@ export function PostScreen() {
               </View>
 
               <View style={styles.commentBottomContainer}>
-                <View style={styles.commentBottomCommentContainer}>
-                  <Text style={styles.nickname} />
-                  <Text style={styles.comment}>comment</Text>
-                </View>
+                {!isError &&
+                  comments?.map(comment => {
+                    return (
+                      <View style={styles.commentBottomCommentContainer}>
+                        <Text style={styles.nickname}>
+                          {comment.member.nickname}
+                        </Text>
+                        <Text style={styles.comment}>{comment.comment}</Text>
+                      </View>
+                    );
+                  })}
               </View>
             </View>
           </View>
@@ -261,7 +255,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   nickname: {
-    color: '#C0C0C0',
+    color: '#fff',
     fontSize: 12,
   },
   comment: {
